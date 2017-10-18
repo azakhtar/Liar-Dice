@@ -24,13 +24,8 @@ void roll::setDice(int playersDice){
 /* Roll all players dice and store the results */
 void roll::rollDice(){
 	srand(time(0));
-	for (int idx = 0; idx < 5; idx++){
-		if ( idx < totalDice ){
-			rollResult[idx] = ( rand() % 6 ) + 1;
-		}
-		else {
-			rollResult[idx] = -1;
-		}
+	for (int idx = 0; idx < totalDice; idx++){
+		rollResult.push_back(((rand() % 6) + 1));
 #ifdef DEBUG
 		cout << "Die" << idx+1 << ":: " << rollResult[idx] << endl;
 #endif
@@ -38,6 +33,6 @@ void roll::rollDice(){
 }
 
 /* Return the results of dice rolls */
-int* roll::getDiceRoll(){
+std::vector <int> roll::getDiceRoll(){
 	return rollResult;
 }

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdlib>
+#include <vector>
 #include "Game/player.h"
 #include "Game/roll.h"
 #include "Game/game.h"
@@ -16,19 +17,17 @@ using namespace std;
 
 int main(){
 
-
 #ifdef DEBUG
-	printf("DEBUG MODE\n");
-#endif
-#ifdef RELEASE
-	printf("RELEASE MODE\n");
+	cout << "DEBUG MODE" << endl;
+#else
+	cout << "RELEASE MODE" << endl;
 #endif
 
 	player player1(PLAYER1);
 	player player2(PLAYER2);
 
 	game newGame(player1.getPlayer(), player2.getPlayer());
-	int* result = newGame.getRoll();
+	std::vector <int> result = newGame.getRoll();
 
 	player1.setRoll(result);
 

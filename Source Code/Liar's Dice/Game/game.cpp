@@ -61,22 +61,14 @@ void game::updateGameAssignments(){
 /* This function gets the result of rolling dice &
  * copies those results into the diceRoll array. */
 void game::rollDice(){
-	int* result;
-	int maxIdx = 0;
 
 	if ( player1.assignment == ROLLER ){
 		roll rollDice(player1.dice);
-		result = rollDice.getDiceRoll();
-		maxIdx = player1.dice;
+		diceRoll = rollDice.getDiceRoll();
 	}
 	else if ( player2.assignment == ROLLER ){
 		roll rollDice(player2.dice);
-		result = rollDice.getDiceRoll();
-		maxIdx = player2.dice;
-	}
-
-	for(int idx = 0; idx < maxIdx; idx++){
-		diceRoll[idx] = *(result + idx);
+		diceRoll = rollDice.getDiceRoll();
 	}
 }
 
@@ -111,7 +103,7 @@ int game::startGame(){
 }
 
 /* This function returns the current dice roll. */
-int* game::getRoll(){
+std::vector <int> game::getRoll(){
 	return diceRoll;
 }
 

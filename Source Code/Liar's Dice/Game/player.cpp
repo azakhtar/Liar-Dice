@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 #include "player.h"
 #include "game.h"
 #include "roll.h"
@@ -26,12 +27,14 @@ player::PLAYERTYPE player::getPlayer(){
 	return currPlayer;
 }
 
-void player::setRoll(int* roll){
+void player::setRoll(std::vector <int> roll){
 	playerRoll = roll;
+
 #ifdef DEBUG
-	cout << "SECOND CHECK" << endl;
+	cout << "Verifying Dice Roll" << endl;
 	for(int i=0; i<5; i++){
-		cout << "Die" << i+1 << ":: " << playerRoll[i] << endl;
+		playerRoll.push_back(roll[i]);
+		cout << "Die" << i+1 << ":: " << roll[i] << endl;
 	}
 #endif
 }
