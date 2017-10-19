@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <vector>
+#include <tuple>
 #include "Game/player.h"
 #include "Game/roll.h"
 #include "Game/game.h"
@@ -30,6 +31,10 @@ int main(){
 	std::vector <int> result = newGame.getRoll();
 
 	player1.setRoll(result);
+	player1.getCall();
+
+	std::tuple <int, int> call = player1.getCall();
+	cout << "Player Call: " << get<0>(call) << " " << get<1>(call) << "s"  <<endl;
 
 	return 0;
 }

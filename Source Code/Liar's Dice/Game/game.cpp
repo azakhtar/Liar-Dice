@@ -61,7 +61,6 @@ void game::updateGameAssignments(){
 /* This function gets the result of rolling dice &
  * copies those results into the diceRoll array. */
 void game::rollDice(){
-
 	if ( player1.assignment == ROLLER ){
 		roll rollDice(player1.dice);
 		diceRoll = rollDice.getDiceRoll();
@@ -129,4 +128,6 @@ void game::setRoundStatus(game::ROUND_RESULT p1Result, game::ROUND_RESULT p2Resu
 	player1.roundStatus = p1Result;
 	player2.roundStatus = p2Result;
 }
+
+//TODO: add the getWinner/Loser function
 

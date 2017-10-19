@@ -1,5 +1,6 @@
 #include <iostream>
 #include <time.h>
+#include <algorithm>
 #include "roll.h"
 #include "game.h"
 #include "player.h"
@@ -23,13 +24,15 @@ void roll::setDice(int playersDice){
 
 /* Roll all players dice and store the results */
 void roll::rollDice(){
-	srand(time(0));
-	for (int idx = 0; idx < totalDice; idx++){
+	srand( time(0) );
+	for ( int idx = 0; idx < totalDice; idx++ ) {
 		rollResult.push_back(((rand() % 6) + 1));
 #ifdef DEBUG
 		cout << "Die" << idx+1 << ":: " << rollResult[idx] << endl;
 #endif
 	}
+
+	std::sort(rollResult.begin(), rollResult.end());
 }
 
 /* Return the results of dice rolls */
