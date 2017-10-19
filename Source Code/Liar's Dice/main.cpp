@@ -28,13 +28,16 @@ int main(){
 	player player2(PLAYER2);
 
 	game newGame(player1.getPlayer(), player2.getPlayer());
+
 	std::vector <int> result = newGame.getRoll();
 
 	player1.setRoll(result);
-	player1.getCall();
-
 	std::tuple <int, int> call = player1.getCall();
-	cout << "Player Call: " << get<0>(call) << " " << get<1>(call) << "s"  <<endl;
+
+	newGame.startGame();
+	result = newGame.getRoll();
+	player1.setRoll(result);
+	call = player1.getCall();
 
 	return 0;
 }

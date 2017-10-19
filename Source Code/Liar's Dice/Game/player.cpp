@@ -40,8 +40,10 @@ void player::setRoll(std::vector <int> roll){
 	int currDie;
 	int prevDie = 0;
 	int count;
+	diceCount.clear();
+
 #ifdef DEBUG
-	cout << "ORDERED DICE" << endl;
+	cout << "PLAYER ROLLED" << endl;
 	int idx = 0;
 #endif
 
@@ -72,13 +74,13 @@ void player::setRoll(std::vector <int> roll){
 std::tuple <int, int> player::getCall(){
 
 	if ( currPlayer == player::PLAYERTYPE::BLUFFER ){
-		void blufferCall();
+		blufferCall();
+	}
+	else if ( currPlayer == player::PLAYERTYPE::CONSERVATIVE ){
+		conservativeCall();
 	}
 	else if ( currPlayer == player::PLAYERTYPE::PROBABILISTIC ){
-		void probableCall();
-	}
-	else if ( currPlayer == player::PLAYERTYPE::RANDOM ){
-		void randomCall();
+		probableCall();
 	}
 	//else if ( currPlayer == player::PLAYERTYPE::SMART ){}
 	return currCall;
@@ -89,29 +91,116 @@ std::tuple <int, int> player::getCall(){
 void player::getResponse(){
 
 	if ( currPlayer == player::PLAYERTYPE::BLUFFER ){
-		void blufferResponse();
+		blufferResponse();
+	}
+	else if ( currPlayer == player::PLAYERTYPE::CONSERVATIVE ){
+		conservativeResponse();
 	}
 	else if ( currPlayer == player::PLAYERTYPE::PROBABILISTIC ){
-		void probableResponse();
-	}
-	else if ( currPlayer == player::PLAYERTYPE::RANDOM ){
-		void randomResponse();
+		probableResponse();
 	}
 	//else if ( currPlayer == player::PLAYERTYPE::SMART ){}
 }
 
-/* This function determines the call for the bluffer. */
-void player::blufferCall(){}
+/* This function determines the call for BLUFFER.
+ * It does it by:
+ * 1. Stores values from last call if its not 1st round of a game
+ * 2. Iterates over current call to find best possible call to make
+ * 3. If current Call is of count<=2 & dieValue<=2, players bluffs
+ * 4. If best call to make is still less than last call (step 1) it
+ *    uses the last call and increments the count and die value by 1.
+ */
+void player::blufferCall(){
+	int lastCallExists = 0;
+	int lastCallCount = 0;
+	int lastCallDie = 0;
 
-/* This function determines the call for probable player. */
-void player::probableCall(){
+	if ( get<0>(currCall) != 0 ){
+		lastCallExists = 1;
+		lastCallCount = get<0>(currCall);
+		lastCallDie = get<1>(currCall);
+	}
 
+	for( size_t i = 0; i < diceCount.size(); i++ ){
+		if ( get<0>(currCall) < get<0>(diceCount[i]) ){
+			get<0>(currCall) = get<0>(diceCount[i]);
+			get<1>(currCall) = get<1>(diceCount[i]);
+		}
+		else if ( get<0>(currCall) == get<0>(diceCount[i]) && get<1>(currCall) < get<1>(diceCount[i]) ){
+			get<1>(currCall) = get<1>(diceCount[i]);
+		}
+	}
+
+	if ( get<0>(currCall) <= 2 && get<1>(currCall) <= 2 ){
+		get<0>(currCall) = 3;
+		get<1>(currCall) = 3;
+	}
+
+	if ( lastCallExists == 1 ){
+		if ( get<0>(currCall) <= lastCallCount ){
+			get<0>(currCall) = lastCallCount + 1;
+			get<1>(currCall) = lastCallDie + 1;
+		}
+		else if ( get<1>(currCall) <= lastCallDie ){
+			get<0>(currCall) = lastCallCount + 1;
+			get<1>(currCall) = lastCallDie + 1;
+		}
+	}
+
+#ifdef DEBUG
+		cout << "BLUFFER Call: " << get<0>(currCall) << " " << get<1>(currCall) << "s"  <<endl;
+#endif
 }
 
-void player::randomCall(){}
+/* This function determines the call for CONSERVATIVE player.
+ * It does it by:
+ * 1. Stores values from last call if its not 1st round of a game
+ * 2. Iterates over current call to find best possible call to make
+ * 3. If best call to make it less than last call (step 1) it uses
+ *    the last call and increments the count and die value by 1.
+ */
+void player::conservativeCall(){
+	int lastCallExists = 0;
+	int lastCallCount = 0;
+	int lastCallDie = 0;
+
+	if ( get<0>(currCall) != 0 ){
+		lastCallExists = 1;
+		lastCallCount = get<0>(currCall);
+		lastCallDie = get<1>(currCall);
+	}
+
+	for( size_t i = 0; i < diceCount.size(); i++ ){
+		if ( get<0>(currCall) < get<0>(diceCount[i]) ){
+			get<0>(currCall) = get<0>(diceCount[i]);
+			get<1>(currCall) = get<1>(diceCount[i]);
+		}
+		else if ( get<0>(currCall) == get<0>(diceCount[i]) && get<1>(currCall) < get<1>(diceCount[i]) ){
+			get<1>(currCall) = get<1>(diceCount[i]);
+		}
+	}
+
+	if ( lastCallExists == 1 ){
+		if ( get<0>(currCall) <= lastCallCount ){
+			get<0>(currCall) = lastCallCount + 1;
+			get<1>(currCall) = lastCallDie + 1;
+		}
+		else if ( get<1>(currCall) <= lastCallDie ){
+			get<0>(currCall) = lastCallCount + 1;
+			get<1>(currCall) = lastCallDie + 1;
+		}
+	}
+
+#ifdef DEBUG
+		cout << "CONSERVATIVE Call: " << get<0>(currCall) << " " << get<1>(currCall) << "s"  <<endl;
+#endif
+}
+
+/* This function determines the call for probable player. */
+void player::probableCall(){}
 void player::blufferResponse(){}
+void player::conservativeResponse(){}
 void player::probableResponse(){}
-void player::randomResponse(){}
 
 
 
