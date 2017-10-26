@@ -1,6 +1,8 @@
 #include <iostream>
 #include <algorithm>
 #include <cstddef>
+#include <cmath>
+#include <iomanip>
 #include "player.h"
 #include "game.h"
 #include "roll.h"
@@ -23,6 +25,46 @@ void player::setPlayer(int playerType){
 	}
 }
 
+/*
+ * This function sets the probabilities of
+ * instances of a dice depending on the unknown
+ * dice available.
+ */
+void player::setProbability(int unknownDice){
+	int diceFactorial;
+	int instanceFactorial;
+	int diceMinusInstanceFactorial;
+	double probability;
+
+	cout << "####################################" << endl;
+	cout << "n    0     1     2     3     4     5" << endl;
+	for ( int n = unknownDice; n > 0; n-- ){
+		diceFactorial = factorial(n);
+		cout << n;
+		std::cout << std::setprecision(2) << std::fixed;
+
+		for ( int k = 0; k <= n; k++ ){
+			instanceFactorial = factorial(k);
+			diceMinusInstanceFactorial = factorial(n-k);
+			probability = (diceFactorial/((instanceFactorial)*(diceMinusInstanceFactorial)))*(pow(1.0/6.0, double(k)))*(pow(5.0/6.0, double(n-k)))*100;
+			diceProbabilities[n].push_back(probability);
+
+			cout << "  " << diceProbabilities[n].at(k);
+		}
+		cout << endl;
+	}
+
+}
+
+/* This function returns factorial for a value. */
+int player::factorial(int n)
+{
+    if(n > 1)
+        return n * factorial(n - 1);
+    else
+        return 1;
+}
+
 /* This function returns the playerType. */
 player::PLAYERTYPE player::getPlayer(){
 	return currPlayer;
@@ -32,6 +74,11 @@ player::PLAYERTYPE player::getPlayer(){
 void player::setDice(int player1Dice, int player2Dice){
 	currPlayerDice = player1Dice;
 	opponentsDice = player2Dice;
+
+	if ( gameInProcess == 0 ){
+		player::setProbability(opponentsDice);
+		gameInProcess = 1;
+	}
 }
 
 /*

@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <tuple>
+#include <map>
 
 class player{
 
@@ -21,6 +22,8 @@ public: player(int playerType);
 
 private: //FUNCTIONS
 	     void setPlayer(int playerType);
+	     int  factorial(int n);
+	     void setProbability(int unknownDice);
 	     void blufferCall();
 	     void probableCall();
 	     void conservativeCall();
@@ -28,13 +31,16 @@ private: //FUNCTIONS
 	     void probableResponse();
 	     void conservativeResponse();
 
+
 	     //VARIABLES
+	     int gameInProcess = 0;
 	     int currPlayerDice;
 	     int opponentsDice;
 	     player::PLAYERTYPE currPlayer;
 	     std::vector <int> playerRoll;
 	     std::vector <std::tuple <int, int>> diceCount;
 	     std::tuple <int, int> otherPlayerCall = (std::make_tuple(0, 0));
+	     std::map <int, std::vector <double>> diceProbabilities;
 
 };
 

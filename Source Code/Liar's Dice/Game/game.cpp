@@ -85,7 +85,6 @@ int game::startGame(){
 	}
 
 	game::rollDice();
-
 	return 0;
 }
 
