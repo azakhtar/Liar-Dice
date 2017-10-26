@@ -14,13 +14,13 @@ game::game(player::PLAYERTYPE player1, player::PLAYERTYPE player2){
 /* This function initializes player data. */
 void game::setPlayers(player::PLAYERTYPE p1, player::PLAYERTYPE p2){
 	player1.playerType = p1;
-	player1.assignment = ROLLER;
+	player1.turn = FIRST;
 	player1.playerCall = NA;
 	player1.roundStatus = NONE;
 	player1.dice = 5;
 
 	player2.playerType = p2;
-	player2.assignment = CALLER;
+	player2.turn = SECOND;
 	player2.playerCall = NA;
 	player2.roundStatus = NONE;
 	player2.dice = 5;
@@ -37,38 +37,26 @@ void game::updateDice(){
 	}
 }
 
-/* This function sets the roller/caller for each game/round. */
+/* This function sets the FIRST/SECOND for each game/round. */
 void game::updateGameAssignments(){
 	if ( player1.roundStatus == WON ){
-		player1.assignment = ROLLER;
-		player2.assignment = CALLER;
+		player1.turn = FIRST;
+		player2.turn = SECOND;
 	}
 	else if ( player2.roundStatus == WON ){
-		player2.assignment = ROLLER;
-		player1.assignment = CALLER;
-	}
-
-	if ( player1.playerCall == CALL && player2.playerCall == ACCEPT ){
-		player2.assignment = ROLLER;
-		player1.assignment = CALLER;
-	}
-	else if ( player2.playerCall == CALL && player1.playerCall == ACCEPT ){
-		player1.assignment = ROLLER;
-		player2.assignment = CALLER;
+		player2.turn = FIRST;
+		player1.turn = SECOND;
 	}
 }
 
-/* This function gets the result of rolling dice &
- * copies those results into the diceRoll array. */
+/* This function rolls the dice for both players &
+ * copies those results into appropriate  arrays. */
 void game::rollDice(){
-	if ( player1.assignment == ROLLER ){
-		roll rollDice(player1.dice);
-		diceRoll = rollDice.getDiceRoll();
-	}
-	else if ( player2.assignment == ROLLER ){
-		roll rollDice(player2.dice);
-		diceRoll = rollDice.getDiceRoll();
-	}
+	roll firstPlayerRollDice(player1.dice);
+	firstPlayerDiceRoll = firstPlayerRollDice.getDiceRoll();
+
+	roll secondPlayerRollDice(player2.dice);
+	secondPlayerDiceRoll = secondPlayerRollDice.getDiceRoll();
 }
 
 /* This function returns -1 if game is over. */
@@ -102,19 +90,41 @@ int game::startGame(){
 }
 
 /* This function returns the current dice roll. */
-std::vector <int> game::getRoll(){
-	return diceRoll;
+std::vector <int> game::getRoll(player::PLAYERTYPE player){
+	if ( player1.playerType == player ){
+		return firstPlayerDiceRoll;
+	}
+	else if ( player2.playerType == player ){
+		return secondPlayerDiceRoll;
+	}
+	else {
+		cout << "ERROR game::getRoll : Roll for player does not exist!" <<endl;
+		exit(-1);
+	}
 }
 
-/* This function returns the current roller */
-player::PLAYERTYPE game::getRoller(){
-	if ( player1.assignment == ROLLER ){
+/* This function returns the player with first turn. */
+player::PLAYERTYPE game::getPlayerTurn(){
+	if ( player1.turn == FIRST ){
 		return player1.playerType;
 	}
 	else {
 		return player2.playerType;
 	}
+}
 
+/* Returns the dice of the player requested. */
+int game::getDice(player::PLAYERTYPE player){
+	if ( player1.playerType == player ){
+		return player1.dice;
+	}
+	else if ( player2.playerType == player ){
+		return player2.dice;
+	}
+	else {
+		cout << "ERROR game::getRoll : Roll for player does not exist!" <<endl;
+		exit(-1);
+	}
 }
 
 /* This function set the player calls for each round */

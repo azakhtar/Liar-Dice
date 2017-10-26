@@ -13,8 +13,8 @@ using namespace std;
  * 2: PROBABILISTIC
  * 3: SMART
  */
-#define PLAYER1 0
-#define PLAYER2 1
+#define PLAYER1 1
+#define PLAYER2 0
 
 int main(){
 
@@ -26,18 +26,39 @@ int main(){
 
 	player player1(PLAYER1);
 	player player2(PLAYER2);
+	int player1Dice;
+	int player2Dice;
+	std::vector <int> player1Roll;
+	std::vector <int> player2Roll;
+	std::tuple <int, int> player1Call;
+	std::tuple <int, int> player2Call;
 
+	//Start a new game
 	game newGame(player1.getPlayer(), player2.getPlayer());
 
-	std::vector <int> result = newGame.getRoll();
+	//Get dice for both players
+	player1Dice = newGame.getDice(player1.getPlayer());
+	player2Dice = newGame.getDice(player2.getPlayer());
 
-	player1.setRoll(result);
-	std::tuple <int, int> call = player1.getCall();
+	//Set dice for both players
+	player1.setDice(player1Dice, player2Dice);
+	player2.setDice(player2Dice, player1Dice);
 
-	newGame.startGame();
-	result = newGame.getRoll();
-	player1.setRoll(result);
-	call = player1.getCall();
+	//Get rolls for both players
+	player1Roll = newGame.getRoll(player1.getPlayer());
+	player2Roll = newGame.getRoll(player2.getPlayer());
+
+	//Set rolls for both players
+	player1.setRoll(player1Roll);
+	player2.setRoll(player2Roll);
+
+	//Get call from player 1
+	player1Call = player1.getCall();
+
+	//Set & get call from player 2
+	player2.setCall(player1Call);
+	player2Call = player2.getCall();
+
 
 	return 0;
 }

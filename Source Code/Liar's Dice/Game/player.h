@@ -13,8 +13,10 @@ public: player(int playerType);
 
 	    //FUNCTIONS
 	    player::PLAYERTYPE getPlayer();
+	    void setDice(int player1Dice, int player2Dice);
 	    void setRoll(std::vector <int> roll);
 	    std::tuple <int, int> getCall();
+	    void setCall(std::tuple <int, int> otherPlayerCall);
 	    void getResponse();
 
 private: //FUNCTIONS
@@ -27,10 +29,12 @@ private: //FUNCTIONS
 	     void conservativeResponse();
 
 	     //VARIABLES
+	     int currPlayerDice;
+	     int opponentsDice;
 	     player::PLAYERTYPE currPlayer;
 	     std::vector <int> playerRoll;
 	     std::vector <std::tuple <int, int>> diceCount;
-	     std::tuple <int, int> currCall = (std::make_tuple(0, 0));
+	     std::tuple <int, int> otherPlayerCall = (std::make_tuple(0, 0));
 
 };
 

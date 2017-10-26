@@ -10,13 +10,13 @@ public: game(player::PLAYERTYPE player1, player::PLAYERTYPE player2);
 
 		//ENUMERATIONS
 		enum ROUND_RESULT { WON, LOST, NONE };
-		enum ASSIGNMENT { ROLLER, CALLER };
+		enum TURN { FIRST, SECOND };
 		enum CALLS { CALL, ACCEPT, CHALLENGE, NA };
 
 		//DATA TYPES
 		struct playerDetails{
 			player::PLAYERTYPE playerType;
-			game::ASSIGNMENT assignment;
+			game::TURN turn;
 			game::CALLS playerCall;
 			game::ROUND_RESULT roundStatus;
 			int dice;
@@ -24,8 +24,9 @@ public: game(player::PLAYERTYPE player1, player::PLAYERTYPE player2);
 
 		//FUNCTIONS
 		int startGame();
-		std::vector <int> getRoll();
-		player::PLAYERTYPE getRoller();
+		std::vector <int> getRoll(player::PLAYERTYPE player);
+		player::PLAYERTYPE getPlayerTurn();
+		int getDice(player::PLAYERTYPE player);
 		void setPlayerCalls(game::CALLS p1Call, game::CALLS p2Call);
 		void setRoundStatus(game::ROUND_RESULT p1Result, game::ROUND_RESULT p2Result);
 
@@ -39,7 +40,8 @@ private: //FUNCTIONS
 		 //VARIABLES
 		 game::playerDetails player1;
 		 game::playerDetails player2;
-		 std::vector <int> diceRoll;
+		 std::vector <int> firstPlayerDiceRoll;
+		 std::vector <int> secondPlayerDiceRoll;
 		 int gameStatus;
 		 player::PLAYERTYPE winner;
 		 player::PLAYERTYPE loser;

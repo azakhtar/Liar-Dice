@@ -28,6 +28,12 @@ player::PLAYERTYPE player::getPlayer(){
 	return currPlayer;
 }
 
+/* This function sets the dice of the both players. */
+void player::setDice(int player1Dice, int player2Dice){
+	currPlayerDice = player1Dice;
+	opponentsDice = player2Dice;
+}
+
 /*
  * This function organizes the roll and sets it to diceCount.
  * It does this by:
@@ -43,7 +49,7 @@ void player::setRoll(std::vector <int> roll){
 	diceCount.clear();
 
 #ifdef DEBUG
-	cout << "PLAYER ROLLED" << endl;
+	cout << "PLAYER " << currPlayer << " ROLL" << endl;
 	int idx = 0;
 #endif
 
@@ -83,7 +89,7 @@ std::tuple <int, int> player::getCall(){
 		probableCall();
 	}
 	//else if ( currPlayer == player::PLAYERTYPE::SMART ){}
-	return currCall;
+	return otherPlayerCall;
 }
 
 /* This function determines call the appropriate
@@ -102,6 +108,11 @@ void player::getResponse(){
 	//else if ( currPlayer == player::PLAYERTYPE::SMART ){}
 }
 
+/* This function sets the current call to other players call. */
+void player::setCall(std::tuple <int, int> call){
+	otherPlayerCall = call;
+}
+
 /* This function determines the call for BLUFFER.
  * It does it by:
  * 1. Stores values from last call if its not 1st round of a game
@@ -115,40 +126,40 @@ void player::blufferCall(){
 	int lastCallCount = 0;
 	int lastCallDie = 0;
 
-	if ( get<0>(currCall) != 0 ){
+	if ( get<0>(otherPlayerCall) != 0 ){
 		lastCallExists = 1;
-		lastCallCount = get<0>(currCall);
-		lastCallDie = get<1>(currCall);
+		lastCallCount = get<0>(otherPlayerCall);
+		lastCallDie = get<1>(otherPlayerCall);
 	}
 
 	for( size_t i = 0; i < diceCount.size(); i++ ){
-		if ( get<0>(currCall) < get<0>(diceCount[i]) ){
-			get<0>(currCall) = get<0>(diceCount[i]);
-			get<1>(currCall) = get<1>(diceCount[i]);
+		if ( get<0>(otherPlayerCall) < get<0>(diceCount[i]) ){
+			get<0>(otherPlayerCall) = get<0>(diceCount[i]);
+			get<1>(otherPlayerCall) = get<1>(diceCount[i]);
 		}
-		else if ( get<0>(currCall) == get<0>(diceCount[i]) && get<1>(currCall) < get<1>(diceCount[i]) ){
-			get<1>(currCall) = get<1>(diceCount[i]);
+		else if ( get<0>(otherPlayerCall) == get<0>(diceCount[i]) && get<1>(otherPlayerCall) < get<1>(diceCount[i]) ){
+			get<1>(otherPlayerCall) = get<1>(diceCount[i]);
 		}
 	}
 
-	if ( get<0>(currCall) <= 2 && get<1>(currCall) <= 2 ){
-		get<0>(currCall) = 3;
-		get<1>(currCall) = 3;
+	if ( get<0>(otherPlayerCall) <= 2 && get<1>(otherPlayerCall) <= 2 ){
+		get<0>(otherPlayerCall) = 3;
+		get<1>(otherPlayerCall) = 3;
 	}
 
 	if ( lastCallExists == 1 ){
-		if ( get<0>(currCall) <= lastCallCount ){
-			get<0>(currCall) = lastCallCount + 1;
-			get<1>(currCall) = lastCallDie + 1;
+		if ( get<0>(otherPlayerCall) <= lastCallCount ){
+			get<0>(otherPlayerCall) = lastCallCount + 1;
+			get<1>(otherPlayerCall) = lastCallDie + 1;
 		}
-		else if ( get<1>(currCall) <= lastCallDie ){
-			get<0>(currCall) = lastCallCount + 1;
-			get<1>(currCall) = lastCallDie + 1;
+		else if ( get<1>(otherPlayerCall) <= lastCallDie ){
+			get<0>(otherPlayerCall) = lastCallCount + 1;
+			get<1>(otherPlayerCall) = lastCallDie + 1;
 		}
 	}
 
 #ifdef DEBUG
-		cout << "BLUFFER Call: " << get<0>(currCall) << " " << get<1>(currCall) << "s"  <<endl;
+		cout << "Player " << currPlayer << " Call: " << get<0>(otherPlayerCall) << " " << get<1>(otherPlayerCall) << "s"  <<endl;
 #endif
 }
 
@@ -164,35 +175,35 @@ void player::conservativeCall(){
 	int lastCallCount = 0;
 	int lastCallDie = 0;
 
-	if ( get<0>(currCall) != 0 ){
+	if ( get<0>(otherPlayerCall) != 0 ){
 		lastCallExists = 1;
-		lastCallCount = get<0>(currCall);
-		lastCallDie = get<1>(currCall);
+		lastCallCount = get<0>(otherPlayerCall);
+		lastCallDie = get<1>(otherPlayerCall);
 	}
 
 	for( size_t i = 0; i < diceCount.size(); i++ ){
-		if ( get<0>(currCall) < get<0>(diceCount[i]) ){
-			get<0>(currCall) = get<0>(diceCount[i]);
-			get<1>(currCall) = get<1>(diceCount[i]);
+		if ( get<0>(otherPlayerCall) < get<0>(diceCount[i]) ){
+			get<0>(otherPlayerCall) = get<0>(diceCount[i]);
+			get<1>(otherPlayerCall) = get<1>(diceCount[i]);
 		}
-		else if ( get<0>(currCall) == get<0>(diceCount[i]) && get<1>(currCall) < get<1>(diceCount[i]) ){
-			get<1>(currCall) = get<1>(diceCount[i]);
+		else if ( get<0>(otherPlayerCall) == get<0>(diceCount[i]) && get<1>(otherPlayerCall) < get<1>(diceCount[i]) ){
+			get<1>(otherPlayerCall) = get<1>(diceCount[i]);
 		}
 	}
 
 	if ( lastCallExists == 1 ){
-		if ( get<0>(currCall) <= lastCallCount ){
-			get<0>(currCall) = lastCallCount + 1;
-			get<1>(currCall) = lastCallDie + 1;
+		if ( get<0>(otherPlayerCall) <= lastCallCount ){
+			get<0>(otherPlayerCall) = lastCallCount + 1;
+			get<1>(otherPlayerCall) = lastCallDie + 1;
 		}
-		else if ( get<1>(currCall) <= lastCallDie ){
-			get<0>(currCall) = lastCallCount + 1;
-			get<1>(currCall) = lastCallDie + 1;
+		else if ( get<1>(otherPlayerCall) <= lastCallDie ){
+			get<0>(otherPlayerCall) = lastCallCount + 1;
+			get<1>(otherPlayerCall) = lastCallDie + 1;
 		}
 	}
 
 #ifdef DEBUG
-		cout << "CONSERVATIVE Call: " << get<0>(currCall) << " " << get<1>(currCall) << "s"  <<endl;
+		cout << "Player " << currPlayer << " Call: " << get<0>(otherPlayerCall) << " " << get<1>(otherPlayerCall) << "s"  <<endl;
 #endif
 }
 
