@@ -14,7 +14,7 @@ using namespace std;
  * 3: SMART
  */
 #define PLAYER1 1
-#define PLAYER2 0
+#define PLAYER2 2
 
 int main(){
 
@@ -59,6 +59,13 @@ int main(){
 	player2.setCall(player1Call);
 	player2Call = player2.getCall();
 
+
+	//TODO: TEMP
+	player1.setCall(player2Call);
+	player1Call = player1.getCall();
+
+	player2.setCall(player1Call);
+	player2Call = player2.getCall();
 
 	return 0;
 }
