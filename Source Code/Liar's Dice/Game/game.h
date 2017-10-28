@@ -29,6 +29,7 @@ public: game(player::PLAYERTYPE player1, player::PLAYERTYPE player2);
 		int getDice(player::PLAYERTYPE player);
 		void setPlayerCalls(game::CALLS p1Call, game::CALLS p2Call);
 		void setRoundStatus(game::ROUND_RESULT p1Result, game::ROUND_RESULT p2Result);
+		int compareCall(std::tuple <int, int> callOnTable);
 
 private: //FUNCTIONS
 		 void setPlayers(player::PLAYERTYPE p1, player::PLAYERTYPE p2);

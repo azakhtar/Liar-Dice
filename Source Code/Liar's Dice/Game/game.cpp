@@ -138,5 +138,32 @@ void game::setRoundStatus(game::ROUND_RESULT p1Result, game::ROUND_RESULT p2Resu
 	player2.roundStatus = p2Result;
 }
 
+/* This function compares the bluff call against all dice on the table
+ * to determine if the player calling the bluff WON (1) or LOST (-1).
+ */
+int game::compareCall(std::tuple <int, int> callOnTable){
+	int count = 0;
+
+	for( size_t i = 0; i < firstPlayerDiceRoll.size(); i++ ){
+		if ( get<1>(callOnTable) == firstPlayerDiceRoll[i] ){
+			count++;
+		}
+	}
+
+	for( size_t i = 0; i < secondPlayerDiceRoll.size(); i++ ){
+		if ( get<1>(callOnTable) == secondPlayerDiceRoll[i] ){
+			count++;
+		}
+	}
+
+	if ( get<0>(callOnTable) > count ){
+		cout << "FALSE Count: " << count << endl;
+		return 1;
+	}
+	else {
+		cout << "TRUE Count: " << count << endl;
+		return -1;
+	}
+}
 //TODO: add the getWinner/Loser function
 

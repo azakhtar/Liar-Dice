@@ -40,7 +40,8 @@ void player::setProbability(int unknownDice){
 	double probability;
 
 #ifdef DEBUG
-	cout << "#######################################" << endl;
+	cout << "         DICE PROBABILITY TABLE        " << endl;
+	cout << "########################################" << endl;
 	cout << "n    0     1       2      3     4     5 " << endl;
 #endif
 	for ( int n = unknownDice; n > 0; n-- ){
@@ -90,18 +91,18 @@ void player::setDice(int player1Dice, int player2Dice){
 	currPlayerDice = player1Dice;
 	opponentsDice = player2Dice;
 
-	if ( gameInProcess == 0 ){
-		player::setProbability(opponentsDice);
-		gameInProcess = 1;
-	}
+	if ( currPlayer != player::PLAYERTYPE::BLUFFER ){
+		if ( gameInProcess == 0 ){
+			player::setProbability(opponentsDice);
+			gameInProcess = 1;
+		}
 
-
-	for ( int i = 1; i <= player2Dice; i++ ){
-		if ( diceProbabilities[player2Dice].at(i) > validityThreshold ){
-			validUnknownDiceLimit = i;
+		for ( int i = 1; i <= player2Dice; i++ ){
+			if ( diceProbabilities[player2Dice].at(i) > validityThreshold ){
+				validUnknownDiceLimit = i;
+			}
 		}
 	}
-	cout << validUnknownDiceLimit << endl;
 }
 
 /*
@@ -190,7 +191,9 @@ void player::setCall(std::tuple <int, int> call){
  * 2. Iterates over current call to find best possible call to make
  * 3. If current Call is of count<=2 & dieValue<=2, players bluffs
  * 4. If best call to make is still less than last call (step 1) it
- *    uses the last call and increments the count and die value by 1.
+ *    uses the last call and increments the die value by 1.
+ * 5. If player still can not find better call in steps above it
+ *    calls a bluff.
  */
 void player::blufferCall(){
 	int lastCallExists = 0;
@@ -198,6 +201,7 @@ void player::blufferCall(){
 	int lastCallDie = 0;
 	int currCallCount = 0;
 	int currCallDie = 0;
+	int betterCallFound = 0;
 
 	if ( get<0>(otherPlayerCall) != 0 ){
 		lastCallExists = 1;
@@ -208,28 +212,31 @@ void player::blufferCall(){
 	}
 
 	for( size_t i = 0; i < diceCount.size(); i++ ){
-		if ( currCallCount < get<0>(diceCount[i]) ){
+		if ( currCallCount <= get<0>(diceCount[i]) && currCallDie < get<1>(diceCount[i]) ){
 			currCallCount = get<0>(diceCount[i]);
 			currCallDie = get<1>(diceCount[i]);
+			betterCallFound = 1;
 		}
-		else if ( currCallCount == get<0>(diceCount[i]) && currCallDie < get<1>(diceCount[i]) ){
+		else if ( currCallCount < get<0>(diceCount[i]) && currCallDie <= get<1>(diceCount[i]) ){
+			currCallCount = get<0>(diceCount[i]);
 			currCallDie = get<1>(diceCount[i]);
+			betterCallFound = 1;
 		}
 	}
 
-	if ( lastCallCount <= 2 && lastCallDie <= 2 ){
+	if ( currCallCount <= 2 && currCallDie <= 2 ){
 		currCallCount = 3;
 		currCallDie = 3;
 	}
 
-	if ( lastCallExists == 1 ){
-		if ( currCallCount <= lastCallCount ){
-			currCallCount = lastCallCount + 1;
+	if ( lastCallExists == 1 && betterCallFound == 0 ){
+		if ( currCallDie <= lastCallDie && lastCallDie != 6 ){
+			currCallCount = lastCallCount;
 			currCallDie = lastCallDie + 1;
 		}
-		else if ( get<1>(currPlayerCall) <= lastCallDie ){
-			currCallCount = lastCallCount + 1;
-			currCallDie = lastCallDie + 1;
+		else {
+			currCallCount = -1;
+			currCallDie = -1;
 		}
 	}
 
@@ -337,6 +344,8 @@ void player::probableCall(){
 						i = -2;
 					}
 				}
+				//Player trying to find a card of higher face value than call
+				//If found, the player bets that face value card
 				if ( callBluff == 1 ){
 					int j = i;
 					while ( j >= 0 ) {
@@ -352,6 +361,8 @@ void player::probableCall(){
 						}
 						j++;
 					}
+					//If a higher face value card is not found, the player
+					//call a bluff on its opponoent
 					if ( currCallDie == lastCallDie ){
 						currCallCount = -1;
 						currCallDie = -1;
