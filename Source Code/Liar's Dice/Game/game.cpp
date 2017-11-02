@@ -8,7 +8,8 @@ using namespace std;
 /* This class creates a human player. */
 game::game(player::PLAYERTYPE player1, player::PLAYERTYPE player2){
 	game::setPlayers(player1, player2);
-	game::startGame();
+	//game::startGame();
+	//TODO: Delete line above
 }
 
 /* This function initializes player data. */
@@ -157,13 +158,20 @@ int game::compareCall(std::tuple <int, int> callOnTable){
 	}
 
 	if ( get<0>(callOnTable) > count ){
-		cout << "FALSE Count: " << count << endl;
+		//cout << "FALSE Count: " << count << endl;
 		return 1;
 	}
 	else {
-		cout << "TRUE Count: " << count << endl;
+		//cout << "TRUE Count: " << count << endl;
 		return -1;
 	}
 }
-//TODO: add the getWinner/Loser function
-
+//This function returns the winner for the round
+int game::getWinner(){
+	if ( player1.roundStatus == game::ROUND_RESULT::WON ){
+		return 1;
+	}
+	else{
+		return 2;
+	}
+}
