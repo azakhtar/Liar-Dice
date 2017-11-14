@@ -10,13 +10,23 @@
 
 using namespace std;
 
-/* 0: BLUFFER
- * 1: RANDOM
- * 2: PROBABILISTIC
- * 3: SMART
- */
+/* DEFINE PLAYERS */
+// 0: BLUFFER
+// 1: PROBABILISTIC
+// 2: SMART
 #define PLAYER1 0
 #define PLAYER2 1
+
+/* DEFINE WHICH PLAYER GOES FIRST FOR FIRST GAME */
+// TURN = 1 --> FOR PLAYER 1 above
+// TURN = 2 --> FOR PLAYER 2 above
+#define TURN 1
+
+/* ENTER INT NUMBER FOR TOTAL GAMES */
+#define TOTALGAMES 1000
+
+/* ENTER TOTAL ROUNDS OF TOTAL GAMES ABOVE */
+//#define ROUNDS 2
 
 int main(){
 
@@ -27,7 +37,6 @@ int main(){
 #else
 	cout << "RELEASE MODE" << endl;
 #endif
-
 
 	player player1(PLAYER1);
 	player player2(PLAYER2);
@@ -40,21 +49,21 @@ int main(){
 	int currGameOver;
 	int currRoundOver;
 	int callCompareResult;
-	int turn = 1; //TODO: This assignment will depend on whoever #define PLAYER1 is
-	int totalGames = 0;
+	int turn = TURN;
+	int games = 0;
 	int gamesP1Won = 0;
 	int gamesP2Won = 0;
 	int winner = 0;
 
-	while ( totalGames < 1000 ){
+	while ( games < TOTALGAMES ){
 #ifdef DEBUG
 		cout << "\nSTARTING NEW GAME\n" << endl;
 #endif
 		game newGame(player1.getPlayer(), player2.getPlayer());
 		currGameOver = 0;
-		totalGames++;
+		games++;
 
-		//TODO: Need to try many trials with different turns
+		//Switch who goes first based off winner from previous round
 		if ( winner == 1 ){
 			turn = 1;
 		}
@@ -62,9 +71,12 @@ int main(){
 			turn = 2;
 		}
 
+		//This loop covers one full game
 		while ( currGameOver == 0 ){
 			currGameOver = newGame.startGame();
 
+			//If game is not over, get the player dice from games and tell players
+			//how many dice they and their opponents have left
 			if ( currGameOver != -1 ){
 				currRoundOver = 0;
 				oldCall = (std::make_tuple(0, 0));
@@ -82,6 +94,7 @@ int main(){
 				player1.setRoll(player1Roll);
 				player2.setRoll(player2Roll);
 			}
+			//If game is over, get the winner of the game and increment their total wins
 			else {
 				winner = newGame.getWinner();
 				if ( winner == 1 ){
@@ -99,8 +112,11 @@ int main(){
 				break;
 			}
 
+			//This while loop plays 1 full round until one of the players loses a die
 			while ( currRoundOver == 0 ){
 
+				//Depending on whose turn it is, that player makes a call
+				//by judging the old call on the table made by the other player
 				if ( turn == 1 ){
 					player1.setCall(oldCall);
 					currCall = player1.getCall();
@@ -110,11 +126,11 @@ int main(){
 					currCall = player2.getCall();
 				}
 
-				//If player1 called bluff compare the call
+				//This node is executed if any of the players decides to call BLUFF on other player
 				if ( get<0>(currCall) == -1 ){
 					callCompareResult = newGame.compareCall(oldCall);
 
-					//If 1 is returned that means p1 won BLUFF else p2 lost
+					//If 1 is returned that means player that called BLUFF wins, else other player wins
 					if ( callCompareResult == 1 ){
 						if ( turn == 1 ){
 							newGame.setRoundStatus(game::ROUND_RESULT::WON, game::ROUND_RESULT::LOST);
@@ -148,6 +164,9 @@ int main(){
 					currRoundOver = 1;
 					turn = newGame.getWinner();
 				}
+				//If no one calls BLUFF then set currCall as oldCall and flip flop the turns
+				//for the other player to call first. E.g if turn=1 that means PLAYER1 just called
+				//so we change turn=2 so PLAYER2 can call next iteration
 				else {
 					oldCall = currCall;
 					if ( turn == 1 ){
