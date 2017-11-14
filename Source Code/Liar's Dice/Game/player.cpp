@@ -5,14 +5,14 @@
 #include <iomanip>
 #include "player.h"
 #include "game.h"
-#include "roll.h"
 
 using namespace std;
 
 /* This class creates a human player */
 player::player(int playerType){
 	setPlayer(playerType);
-	if ( currPlayer == 2 ){
+	//TODO:: Fix this and make it more flexible AND not hard coded
+	if ( currPlayer == 1 ){
 		validityThreshold = 25.0;
 	}
 }
@@ -100,6 +100,10 @@ void player::setDice(int player1Dice, int player2Dice){
 		for ( int i = 1; i <= player2Dice; i++ ){
 			if ( diceProbabilities[player2Dice].at(i) > validityThreshold ){
 				validUnknownDiceLimit = i;
+				//TODO: Delete following lines
+				/*cout << "Dice Prob is:: " << diceProbabilities[player2Dice].at(i) << endl;
+				cout << "Validity Threshold is:: " << validityThreshold << endl;
+				cout << "THRESHOLD:::" << validUnknownDiceLimit << endl;*/
 			}
 		}
 	}
@@ -120,7 +124,7 @@ void player::setRoll(std::vector <int> roll){
 	diceCount.clear();
 
 #ifdef DEBUG
-	cout << "PLAYER " << currPlayer << " ROLL" << endl;
+	cout << "PLAYER " << currPlayer + 1 << " ROLL" << endl;
 	int idx = 0;
 #endif
 
@@ -153,30 +157,11 @@ std::tuple <int, int> player::getCall(){
 	if ( currPlayer == player::PLAYERTYPE::BLUFFER ){
 		blufferCall();
 	}
-	else if ( currPlayer == player::PLAYERTYPE::CONSERVATIVE ){
-		conservativeCall();
-	}
 	else if ( currPlayer == player::PLAYERTYPE::PROBABILISTIC ){
 		probableCall();
 	}
 	//else if ( currPlayer == player::PLAYERTYPE::SMART ){}
 	return currPlayerCall;
-}
-
-/* This function determines call the appropriate
- * function to respond for the player. */
-void player::getResponse(){
-
-	if ( currPlayer == player::PLAYERTYPE::BLUFFER ){
-		blufferResponse();
-	}
-	else if ( currPlayer == player::PLAYERTYPE::CONSERVATIVE ){
-		conservativeResponse();
-	}
-	else if ( currPlayer == player::PLAYERTYPE::PROBABILISTIC ){
-		probableResponse();
-	}
-	//else if ( currPlayer == player::PLAYERTYPE::SMART ){}
 }
 
 /* This function sets the current call to other players call. */
@@ -244,59 +229,9 @@ void player::blufferCall(){
 	get<1>(currPlayerCall) = currCallDie;
 
 #ifdef DEBUG
-		cout << "Player " << currPlayer << " Call: " << get<0>(currPlayerCall) << " " << get<1>(currPlayerCall) << "s"  <<endl;
-#endif
-}
-
-/* This function determines the call for CONSERVATIVE player.
- * It does it by:
- * 1. Stores values from last call if its not 1st round of a game
- *    and set them equal to initial values for current call
- * 2. Iterates over current call to find best possible call to make
- * 3. If best call to make it less than last call (step 1) it uses
- *    the last call and increments the count and die value by 1.
- */
-void player::conservativeCall(){
-	int lastCallExists = 0;
-	int lastCallCount = 0;
-	int lastCallDie = 0;
-	int currCallCount = 0;
-	int currCallDie = 0;
-
-	if ( get<0>(otherPlayerCall) != 0 ){
-		lastCallExists = 1;
-		lastCallCount = get<0>(otherPlayerCall);
-		lastCallDie = get<1>(otherPlayerCall);
-		currCallCount = lastCallCount;
-		currCallDie = lastCallDie;
+	if (get<0>(currPlayerCall) != -1 ){
+		cout << "Player " << currPlayer + 1 << " Call: " << get<0>(currPlayerCall) << " " << get<1>(currPlayerCall) << "s"  <<endl;
 	}
-
-	for( size_t i = 0; i < diceCount.size(); i++ ){
-		if ( currCallCount < get<0>(diceCount[i]) ){
-			currCallCount = get<0>(diceCount[i]);
-			currCallDie = get<1>(diceCount[i]);
-		}
-		else if ( currCallCount == get<0>(diceCount[i]) && currCallDie < get<1>(diceCount[i]) ){
-			currCallDie = get<1>(diceCount[i]);
-		}
-	}
-
-	if ( lastCallExists == 1 ){
-		if ( currCallCount <= lastCallCount ){
-			currCallCount = lastCallCount + 1;
-			currCallDie = lastCallDie + 1;
-		}
-		else if ( get<1>(currPlayerCall) <= lastCallDie ){
-			currCallCount = lastCallCount + 1;
-			currCallDie = lastCallDie + 1;
-		}
-	}
-
-	get<0>(currPlayerCall) = currCallCount;
-	get<1>(currPlayerCall) = currCallDie;
-
-#ifdef DEBUG
-		cout << "Player " << currPlayer << " Call: " << get<0>(currPlayerCall) << " " << get<1>(currPlayerCall) << "s"  <<endl;
 #endif
 }
 
@@ -337,13 +272,15 @@ void player::probableCall(){
 				//it means opponent if lying. Rather than calling the bluff, currPlayer will
 				//bet a higher face value if available. If not, they will call bluff
 				if ( lastCallCount <= (get<0>(diceCount[i]) + validUnknownDiceLimit) ){
-					if ( (lastCallCount + 1) <= (get<0>(diceCount[i]) + validUnknownDiceLimit) ){
-						currCallCount = lastCallCount + 1;
-						currCallDie = lastCallDie;
-						callBluff = 0;
-						i = -2;
-					}
+					//TODO: Delete these lines
+					//if ( (lastCallCount + 1) <= (get<0>(diceCount[i]) + validUnknownDiceLimit) ){
+					currCallCount = lastCallCount + 1;
+					currCallDie = lastCallDie;
+					callBluff = 0;
+					i = -2;
+					//}
 				}
+
 				//Player trying to find a card of higher face value than call
 				//If found, the player bets that face value card
 				if ( callBluff == 1 ){
@@ -406,13 +343,12 @@ void player::probableCall(){
 	get<1>(currPlayerCall) = currCallDie;
 
 #ifdef DEBUG
-		cout << "Player " << currPlayer << " Call: " << get<0>(currPlayerCall) << " " << get<1>(currPlayerCall) << "s"  <<endl;
+	if (get<0>(currPlayerCall) != -1 ){
+		cout << "Player " << currPlayer + 1 << " Call: " << get<0>(currPlayerCall) << " " << get<1>(currPlayerCall) << "s"  <<endl;
+	}
 #endif
 }
 
-void player::blufferResponse(){}
-void player::conservativeResponse(){}
-void player::probableResponse(){}
 
 
 

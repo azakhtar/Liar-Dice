@@ -36,6 +36,7 @@ private: //FUNCTIONS
 		 void setPlayers(player::PLAYERTYPE p1, player::PLAYERTYPE p2);
 		 void updateDice();
 		 void updateGameAssignments();
+		 std::vector <int> getDiceRoll(int playersDice);
 		 void rollDice();
 		 int isGameOver();
 

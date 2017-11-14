@@ -10,7 +10,7 @@ class player{
 public: player(int playerType);
 
 		//ENUMERATIONS
-	    enum PLAYERTYPE { BLUFFER, CONSERVATIVE, PROBABILISTIC, SMART, NONE };
+	    enum PLAYERTYPE { BLUFFER, PROBABILISTIC, SMART, NONE };
 
 	    //FUNCTIONS
 	    player::PLAYERTYPE getPlayer();
@@ -18,7 +18,6 @@ public: player(int playerType);
 	    void setRoll(std::vector <int> roll);
 	    std::tuple <int, int> getCall();
 	    void setCall(std::tuple <int, int> otherPlayerCall);
-	    void getResponse();
 
 private: //FUNCTIONS
 	     void setPlayer(int playerType);
@@ -26,10 +25,6 @@ private: //FUNCTIONS
 	     void setProbability(int unknownDice);
 	     void blufferCall();
 	     void probableCall();
-	     void conservativeCall();
-	     void blufferResponse();
-	     void probableResponse();
-	     void conservativeResponse();
 
 
 	     //VARIABLES

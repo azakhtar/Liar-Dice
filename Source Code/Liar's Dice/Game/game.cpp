@@ -1,7 +1,8 @@
 #include <iostream>
+#include <time.h>
+#include <algorithm>
 #include "game.h"
 #include "player.h"
-#include "roll.h"
 
 using namespace std;
 
@@ -50,14 +51,24 @@ void game::updateGameAssignments(){
 	}
 }
 
+/* Rolls the number of dice passed in, sorts them and returns result */
+std::vector <int> game::getDiceRoll(int playersDice){
+	std::vector <int> rollResult;
+
+	for ( int idx = 0; idx < playersDice; idx++ ) {
+		rollResult.push_back(((rand() % 6) + 1));
+	}
+
+	std::sort(rollResult.begin(), rollResult.end());
+
+	return rollResult;
+}
+
 /* This function rolls the dice for both players &
  * copies those results into appropriate  arrays. */
 void game::rollDice(){
-	roll firstPlayerRollDice(player1.dice);
-	firstPlayerDiceRoll = firstPlayerRollDice.getDiceRoll();
-
-	roll secondPlayerRollDice(player2.dice);
-	secondPlayerDiceRoll = secondPlayerRollDice.getDiceRoll();
+	firstPlayerDiceRoll = game::getDiceRoll(player1.dice);
+	secondPlayerDiceRoll = game::getDiceRoll(player2.dice);
 }
 
 /* This function returns -1 if game is over. */
