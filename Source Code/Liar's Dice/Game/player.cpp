@@ -261,28 +261,25 @@ void player::probableCall(){
 	}
 
 
-	//If opponent made a call
+	/* If opponent made a call */
 	if ( lastCallExists == 1 ){
-		//Loop through current players dice to find matching dice to opponent call
+		/* Loop through current players dice to find matching dice to opponent call */
 		while ( i >= 0 ){
 			if ( lastCallDie == get<1>(diceCount[i]) ){
 				trumpedOpponentsCall = 1;
-				//Once die is found check to see if opponent is lying or not by comparing
-				//(opponentDie < currPlayerDie + thresholdIdx). If opponentDie is greater
-				//it means opponent if lying. Rather than calling the bluff, currPlayer will
-				//bet a higher face value if available. If not, they will call bluff
+				/* Once die is found check to see if opponent is lying or not by comparing
+				 * (opponentDie < currPlayerDie + thresholdIdx). If opponentDie is greater
+				 * it means opponent if lying. Rather than calling the bluff, currPlayer will
+				 * bet a higher face value if available. If not, they will call bluff */
 				if ( lastCallCount <= (get<0>(diceCount[i]) + validUnknownDiceLimit) ){
-					//TODO: Delete these lines
-					//if ( (lastCallCount + 1) <= (get<0>(diceCount[i]) + validUnknownDiceLimit) ){
 					currCallCount = lastCallCount + 1;
 					currCallDie = lastCallDie;
 					callBluff = 0;
 					i = -2;
-					//}
 				}
 
-				//Player trying to find a card of higher face value than call
-				//If found, the player bets that face value card
+				/* Player trying to find a card of higher face value than call
+				 * If found, the player bets that face value card */
 				if ( callBluff == 1 ){
 					int j = i;
 					while ( j >= 0 ) {
@@ -298,8 +295,8 @@ void player::probableCall(){
 						}
 						j++;
 					}
-					//If a higher face value card is not found, the player
-					//call a bluff on its opponoent
+					/* If a higher face value card is not found, the player
+					 * call a bluff on its opponoent */
 					if ( currCallDie == lastCallDie ){
 						currCallCount = -1;
 						currCallDie = -1;
@@ -314,12 +311,12 @@ void player::probableCall(){
 		}
 	}
 
-	//This is executed if currPlayer is going first or if a better
-	//call was not found in nested loops above
+	/* This is executed if currPlayer is going first or if a better
+	 * call was not found in nested loops above */
 	if ( trumpedOpponentsCall == 0 ){
 		i = 0;
-		//Loop through currPlayers dice and stop at first
-		//dice better than player call and call that dice
+		/* Loop through currPlayers dice and stop at first
+		 * dice better than player call and call that dice */
 		while ( i >= 0 ){
 			if ( currCallDie < get<1>(diceCount[i]) ){
 				currCallCount = get<0>(diceCount[i]);
@@ -332,7 +329,7 @@ void player::probableCall(){
 			}
 			i++;
 		}
-		//If no better dice was found then call BLUFF
+		/* If no better dice was found then call BLUFF */
 		if ( betterDieAvailable == 0 ){
 			currCallCount = -1;
 			currCallDie = -1;

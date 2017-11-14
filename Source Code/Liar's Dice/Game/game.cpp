@@ -9,8 +9,6 @@ using namespace std;
 /* This class creates a human player. */
 game::game(player::PLAYERTYPE player1, player::PLAYERTYPE player2, int dicePerPlayer){
 	game::setPlayers(player1, player2, dicePerPlayer);
-	//game::startGame();
-	//TODO: Delete line above
 }
 
 /* This function initializes player data. */
