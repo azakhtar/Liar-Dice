@@ -6,7 +6,7 @@
 
 class game{
 
-public: game(player::PLAYERTYPE player1, player::PLAYERTYPE player2);
+public: game(player::PLAYERTYPE player1, player::PLAYERTYPE player2, int dicePerPlayer);
 
 		//ENUMERATIONS
 		enum ROUND_RESULT { WON, LOST, NONE };
@@ -33,7 +33,7 @@ public: game(player::PLAYERTYPE player1, player::PLAYERTYPE player2);
 		int getWinner();
 
 private: //FUNCTIONS
-		 void setPlayers(player::PLAYERTYPE p1, player::PLAYERTYPE p2);
+		 void setPlayers(player::PLAYERTYPE p1, player::PLAYERTYPE p2, int dicePerPlayer);
 		 void updateDice();
 		 void updateGameAssignments();
 		 std::vector <int> getDiceRoll(int playersDice);

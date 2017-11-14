@@ -22,6 +22,9 @@ using namespace std;
 // TURN = 2 --> FOR PLAYER 2 above
 #define TURN 1
 
+/* ENTER TOTAL NUMBER OF DICE PER PLAYER */
+#define DICEPERPLAYER 5
+
 /* ENTER INT NUMBER FOR TOTAL GAMES */
 #define TOTALGAMES 1000
 
@@ -59,7 +62,7 @@ int main(){
 #ifdef DEBUG
 		cout << "\nSTARTING NEW GAME\n" << endl;
 #endif
-		game newGame(player1.getPlayer(), player2.getPlayer());
+		game newGame(player1.getPlayer(), player2.getPlayer(), DICEPERPLAYER);
 		currGameOver = 0;
 		games++;
 

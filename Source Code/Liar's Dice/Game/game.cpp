@@ -7,25 +7,25 @@
 using namespace std;
 
 /* This class creates a human player. */
-game::game(player::PLAYERTYPE player1, player::PLAYERTYPE player2){
-	game::setPlayers(player1, player2);
+game::game(player::PLAYERTYPE player1, player::PLAYERTYPE player2, int dicePerPlayer){
+	game::setPlayers(player1, player2, dicePerPlayer);
 	//game::startGame();
 	//TODO: Delete line above
 }
 
 /* This function initializes player data. */
-void game::setPlayers(player::PLAYERTYPE p1, player::PLAYERTYPE p2){
+void game::setPlayers(player::PLAYERTYPE p1, player::PLAYERTYPE p2, int dicePerPlayer){
 	player1.playerType = p1;
 	player1.turn = FIRST;
 	player1.playerCall = NA;
 	player1.roundStatus = NONE;
-	player1.dice = 5;
+	player1.dice = dicePerPlayer;
 
 	player2.playerType = p2;
 	player2.turn = SECOND;
 	player2.playerCall = NA;
 	player2.roundStatus = NONE;
-	player2.dice = 5;
+	player2.dice = dicePerPlayer;
 }
 
 /* This function initializes Dice to 5 for a new game
