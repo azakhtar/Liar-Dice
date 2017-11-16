@@ -11,8 +11,7 @@ using namespace std;
 /* This class creates a human player */
 player::player(int playerType){
 	setPlayer(playerType);
-	//TODO:: Fix this and make it more flexible AND not hard coded
-	if ( currPlayer == 1 ){
+	if ( currPlayer != player::PLAYERTYPE::BLUFFER ){
 		validityThreshold = 25.0;
 	}
 }
@@ -169,17 +168,7 @@ void player::setCall(std::tuple <int, int> call){
 	otherPlayerCall = call;
 }
 
-/* This function determines the call for BLUFFER.
- * It does it by:
- * 1. Stores values from last call if its not 1st round of a game
- *    and set them equal to initial values for current call
- * 2. Iterates over current call to find best possible call to make
- * 3. If current Call is of count<=2 & dieValue<=2, players bluffs
- * 4. If best call to make is still less than last call (step 1) it
- *    uses the last call and increments the die value by 1.
- * 5. If player still can not find better call in steps above it
- *    calls a bluff.
- */
+/* This function determines the call for BLUFFER. */
 void player::blufferCall(){
 	int lastCallExists = 0;
 	int lastCallCount = 0;
@@ -188,6 +177,8 @@ void player::blufferCall(){
 	int currCallDie = 0;
 	int betterCallFound = 0;
 
+	/* Stores values from last call if its not 1st round of a game
+	 * and set them equal to initial values for current call */
 	if ( get<0>(otherPlayerCall) != 0 ){
 		lastCallExists = 1;
 		lastCallCount = get<0>(otherPlayerCall);
@@ -196,6 +187,14 @@ void player::blufferCall(){
 		currCallDie = lastCallDie;
 	}
 
+	/* Iterate over players dice to find better call to make.
+	 * Example: Opponent Call = 3 3s
+	 * IF:     currPlayer has count of 3 or higher then face value
+	 *         for the die associated with that count has to be
+	 *         greater than 3. e.g 3 4s, 4 4s is OK. 3 3s is !OK.
+	 * ELSEIF: currPlayer has count of 4 or higher then face value
+	 * 		   for the die associated with that count can be equal
+	 * 		   to 3 or greater than 3. E.g 4 3s or 4 4s. */
 	for( size_t i = 0; i < diceCount.size(); i++ ){
 		if ( currCallCount <= get<0>(diceCount[i]) && currCallDie < get<1>(diceCount[i]) ){
 			currCallCount = get<0>(diceCount[i]);
@@ -209,16 +208,20 @@ void player::blufferCall(){
 		}
 	}
 
+	/* If current Call is of count<=2 & dieValue<=2, players bluffs */
 	if ( currCallCount <= 2 && currCallDie <= 2 ){
 		currCallCount = 3;
 		currCallDie = 3;
 	}
 
+	/* If best call to make is still less than call on table it
+	 * uses the last call and increments the die value by 1. */
 	if ( lastCallExists == 1 && betterCallFound == 0 ){
 		if ( currCallDie <= lastCallDie && lastCallDie != 6 ){
 			currCallCount = lastCallCount;
 			currCallDie = lastCallDie + 1;
 		}
+		/* If player still can not find better call in steps above it calls a bluff. */
 		else {
 			currCallCount = -1;
 			currCallDie = -1;
@@ -244,9 +247,11 @@ void player::probableCall(){
 	int currCallDie = 0;
 	int callBluff = 1;
 	int trumpedOpponentsCall = 0;
-	int betterDieAvailable = 0;
+	int idxForMatch = 0;
 	int i = 0;
 
+	/* Stores values from last call if its not 1st round of a game
+	 * and set them equal to initial values for current call */
 	if ( get<0>(otherPlayerCall) != 0 ){
 		lastCallExists = 1;
 		lastCallCount = get<0>(otherPlayerCall);
@@ -256,10 +261,13 @@ void player::probableCall(){
 	}
 
 	int diceCountSize = 0;
+
+	/* Set the diceCountSize to players roll. Example:
+	 * Player Roll: 1 2s, 3 3s, 1 6s.
+	 * diceCountSize = 3 (Because player has 3 face values in roll. */
 	for( size_t i = 0; i < diceCount.size(); i++ ){
 		diceCountSize++;
 	}
-
 
 	/* If opponent made a call */
 	if ( lastCallExists == 1 ){
@@ -267,73 +275,63 @@ void player::probableCall(){
 		while ( i >= 0 ){
 			if ( lastCallDie == get<1>(diceCount[i]) ){
 				trumpedOpponentsCall = 1;
+				idxForMatch = i;
 				/* Once die is found check to see if opponent is lying or not by comparing
-				 * (opponentDie < currPlayerDie + thresholdIdx). If opponentDie is greater
-				 * it means opponent if lying. Rather than calling the bluff, currPlayer will
-				 * bet a higher face value if available. If not, they will call bluff */
+				 * (opponentDie < currPlayerDie + thresholdIdx). If opponent call is within
+				 * or equal to defined threshold below than increment count of same face value
+				 * dice by one and set callBluff flag to 0 */
 				if ( lastCallCount <= (get<0>(diceCount[i]) + validUnknownDiceLimit) ){
 					currCallCount = lastCallCount + 1;
 					currCallDie = lastCallDie;
 					callBluff = 0;
 					i = -2;
 				}
-
-				/* Player trying to find a card of higher face value than call
-				 * If found, the player bets that face value card */
-				if ( callBluff == 1 ){
-					int j = i;
-					while ( j >= 0 ) {
-						if ( currCallDie < get<1>(diceCount[j]) ){
-							currCallCount = get<0>(diceCount[j]);
-							currCallDie = get<1>(diceCount[j]);
-							i = -2;
-							j = -2;
-						}
-						if ( j == diceCountSize-1 ){
-							i = -2;
-							j = -2;
-						}
-						j++;
-					}
-					/* If a higher face value card is not found, the player
-					 * call a bluff on its opponoent */
-					if ( currCallDie == lastCallDie ){
-						currCallCount = -1;
-						currCallDie = -1;
-						i = -2;
-					}
-				}
 			}
-			if ( i == diceCountSize-1 ){
+			if ( i == diceCountSize - 1 ){
 				i = -2;
 			}
 			i++;
 		}
 	}
 
-	/* This is executed if currPlayer is going first or if a better
-	 * call was not found in nested loops above */
-	if ( trumpedOpponentsCall == 0 ){
-		i = 0;
+	/* This is executed if currPlayer is going first or if the opponent
+	 * is lying, i.e, a better call not found in while loop above. */
+	if ( callBluff == 1 ){
+		/* IF: A matching dice value was found in current player hand then
+		 * the idx of iteration is set to the idx of found dice. Example:
+		 * Opponent called 3 3s. Current player has 1 2s, 1 3s, 3 5s. In this case
+		 * the idx (i) will be set to the idx of 1 3s which is 2. This is so we do
+		 * not waste time comparing values of dice < 3 (face 1 & 2) because we already
+		 * know we can not call those as each call has to be of higher or same face value.
+		 * ELSE: Set i=0 and increment current players hand from the start.
+		 */
+		if ( trumpedOpponentsCall == 1 ){
+			i = idxForMatch;
+		}
+		else {
+			i = 0;
+		}
+
 		/* Loop through currPlayers dice and stop at first
 		 * dice better than player call and call that dice */
 		while ( i >= 0 ){
 			if ( currCallDie < get<1>(diceCount[i]) ){
 				currCallCount = get<0>(diceCount[i]);
 				currCallDie = get<1>(diceCount[i]);
-				betterDieAvailable = 1;
+				callBluff = 0;
 				i = -2;
 			}
-			if ( i == diceCountSize-1 ){
+			if ( i == diceCountSize - 1 ){
 				i = -2;
 			}
 			i++;
 		}
-		/* If no better dice was found then call BLUFF */
-		if ( betterDieAvailable == 0 ){
-			currCallCount = -1;
-			currCallDie = -1;
-		}
+	}
+
+	/* If no better dice was found then call BLUFF */
+	if ( callBluff == 1 ){
+		currCallCount = -1;
+		currCallDie = -1;
 	}
 
 	get<0>(currPlayerCall) = currCallCount;
