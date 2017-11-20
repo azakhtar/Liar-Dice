@@ -8,8 +8,8 @@ using namespace std;
  * 0: BLUFFER
  * 1: PROBABILISTIC
  * 2: SMART */
-#define PLAYER1 0
-#define PLAYER2 1
+#define PLAYER1 1
+#define PLAYER2 0
 
 /* DEFINE WHICH PLAYER GOES FIRST FOR FIRST GAME
  * TURN = 1 --> FOR PLAYER 1 above

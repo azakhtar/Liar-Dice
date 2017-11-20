@@ -5,14 +5,21 @@
 #include <iomanip>
 #include "player.h"
 #include "game.h"
+#include "empiricalData.h"
 
 using namespace std;
 
 /* This class creates a human player */
 player::player(int playerType){
 	setPlayer(playerType);
+
+	/* If player is not BLUFFER then set Validity Threshold. */
 	if ( currPlayer != player::PLAYERTYPE::BLUFFER ){
 		validityThreshold = 25.0;
+		/* If player is AI Agent then initialize the empirical model. */
+		if ( currPlayer == player::PLAYERTYPE::SMART ){
+			empricialModel.initializeModel();
+		}
 	}
 }
 
@@ -159,7 +166,9 @@ std::tuple <int, int> player::getCall(){
 	else if ( currPlayer == player::PLAYERTYPE::PROBABILISTIC ){
 		probableCall();
 	}
-	//else if ( currPlayer == player::PLAYERTYPE::SMART ){}
+	else if ( currPlayer == player::PLAYERTYPE::SMART ){
+		smartCall();
+	}
 	return currPlayerCall;
 }
 
@@ -233,7 +242,7 @@ void player::blufferCall(){
 
 #ifdef DEBUG
 	if (get<0>(currPlayerCall) != -1 ){
-		cout << "Player " << currPlayer + 1 << " Call: " << get<0>(currPlayerCall) << " " << get<1>(currPlayerCall) << "s"  <<endl;
+		cout << "BLUFFER Calls: " << get<0>(currPlayerCall) << " " << get<1>(currPlayerCall) << "s"  <<endl;
 	}
 #endif
 }
@@ -339,11 +348,21 @@ void player::probableCall(){
 
 #ifdef DEBUG
 	if (get<0>(currPlayerCall) != -1 ){
-		cout << "Player " << currPlayer + 1 << " Call: " << get<0>(currPlayerCall) << " " << get<1>(currPlayerCall) << "s"  <<endl;
+		cout << "PROBABLISTIC Calls: " << get<0>(currPlayerCall) << " " << get<1>(currPlayerCall) << "s"  <<endl;
 	}
 #endif
 }
 
+void player::smartCall(){
+	probableCall();
+}
+
+/* This function is called if we want to debug and look at all map values */
+void player::showMapValues(){
+	int i = 0;
+	empricialModel.printModelValues(i++);
+	empricialModel.printModelValues(i++);
+}
 
 
 

@@ -4,6 +4,7 @@
 #include <vector>
 #include <tuple>
 #include <map>
+#include "empiricalData.h"
 
 class player{
 
@@ -18,6 +19,8 @@ public: player(int playerType);
 	    void setRoll(std::vector <int> roll);
 	    std::tuple <int, int> getCall();
 	    void setCall(std::tuple <int, int> otherPlayerCall);
+	    void showMapValues();
+	    //empiricalData empricialModel;
 
 private: //FUNCTIONS
 	     void setPlayer(int playerType);
@@ -25,6 +28,7 @@ private: //FUNCTIONS
 	     void setProbability(int unknownDice);
 	     void blufferCall();
 	     void probableCall();
+	     void smartCall();
 
 
 	     //VARIABLES
@@ -40,6 +44,10 @@ private: //FUNCTIONS
 	     std::tuple <int, int> otherPlayerCall = (std::make_tuple(0, 0));
 	     std::tuple <int, int> defaultBluff = (std::make_tuple(-1, -1));
 	     std::map <int, std::vector <double>> diceProbabilities;
+
+	     //MODELS
+	     empiricalData empricialModel;
+
 
 };
 
