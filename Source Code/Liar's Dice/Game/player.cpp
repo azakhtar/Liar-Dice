@@ -18,7 +18,7 @@ player::player(int playerType){
 		validityThreshold = 25.0;
 		/* If player is AI Agent then initialize the empirical model. */
 		if ( currPlayer == player::PLAYERTYPE::SMART ){
-			empricialModel.initializeModel();
+			empiricalModel.initializeModel();
 		}
 	}
 }
@@ -128,6 +128,7 @@ void player::setRoll(std::vector <int> roll){
 	int prevDie = 0;
 	int count;
 	diceCount.clear();
+	currPlayerCall = (std::make_tuple(0, 0));
 
 #ifdef DEBUG
 	cout << "PLAYER " << currPlayer + 1 << " ROLL" << endl;
@@ -355,13 +356,29 @@ void player::probableCall(){
 
 void player::smartCall(){
 	probableCall();
+
+}
+
+/* This function call the bluff model function any time opponent calls a bluff. It passes
+ * in the call the SMART player made whether or not opponent called a bluff for that call. */
+void player::evaluateBluffModel(int bluffCalled){
+	/* If current  player has already made a call. */
+	if ( get<0>(currPlayerCall) != 0 ){
+		/* If current player was first one in round to call and opponent called BLUFF right away. */
+		if ( get<0>(otherPlayerCall) == 0 ){
+			empiricalModel.updateBluffModel(1, currPlayerDice, opponentsDice, currPlayerCall, bluffCalled);
+		}
+		else{
+			empiricalModel.updateBluffModel(0, currPlayerDice, opponentsDice, currPlayerCall, bluffCalled);
+		}
+	}
 }
 
 /* This function is called if we want to debug and look at all map values */
 void player::showMapValues(){
-	int i = 0;
-	empricialModel.printModelValues(i++);
-	empricialModel.printModelValues(i++);
+	//int i = 0;
+	//empiricalModel.printModelValues(i++);
+	empiricalModel.printModelValues(2);
 }
 
 

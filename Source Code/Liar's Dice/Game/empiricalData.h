@@ -8,14 +8,14 @@
 class empiricalData{
 
 public: empiricalData();
+
+		//FUNCTIONS
 		void initializeModel();
-		void updateBluffModel();
+		void updateBluffModel(int goingFirst, int myDice, int oppDice, std::tuple <int, int> myCall, int bluffCalled);
+		void updateCallModel(int goingFirst, int myDice, int oppDice, std::tuple <int, int> myCall, int trueOrFalseCall);
 		void printModelValues(int modelNumber);
+
 		//VARIABLES
-
-
-	    //FUNCTIONS
-
 
 private: //FUNCTIONS
 		 void createOpponentModels();
@@ -26,7 +26,7 @@ private: //FUNCTIONS
 		 *	 --> numberOfMyDice (int 1-5)
 		 *		 --> numberOfOpponentDice (int 1-5)
 		 *		 	--> opponentCall (tuple of ints <numberOfDice, diceValue>)
-		 *		 		--> truthfulness (tuple of TODO <lieProbability, truthProbability>)
+		 *		 		--> truthfulness (tuple of TODO <truthProbability, lieProbability>)
 		 */
 		std::map <int, std::map <int, std::map <int, std::map <std::tuple <int, int>, std::tuple <int, int>>>>> opponentMakesCall;
 
@@ -35,10 +35,11 @@ private: //FUNCTIONS
 		 *	 --> numberOfMyDice (int 1-5)
 		 *		 --> numberOfOpponentDice (int 1-5)
 		 *		 	--> myCall (tuple of ints <totalNumberOfDice, diceValue>)
-		 *		 		--> probabilityOfCallingBluff (tuple of ints <numberOfBluffsCalled, numberOfBluffsNotCalled>)
+		 *		 		--> probabilityOfCallingBluff (tuple of ints <numberOfBluffsNotCalled, numberOfBluffsCalled>)
 		 */
 		std::map <int, std::map <int, std::map <int, std::map <std::tuple <int, int>, std::tuple <int, int>>>>> opponentCallsBluff;
 
+		//VARIABLES
 		std::tuple <int, int> defaultTupleVal = (std::make_tuple(0, 0));
 		std::tuple <int, int> defaultCall = (std::make_tuple(0, 0));
 		std::tuple <int, int> currCall = (std::make_tuple(0, 0));

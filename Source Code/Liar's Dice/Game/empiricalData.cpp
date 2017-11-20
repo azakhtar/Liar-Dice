@@ -30,6 +30,10 @@ void empiricalData::initializeModelValsToNull(int myDice){
 /* This function creates values for initializing models. Example
  * isItMyFirstCall(1/2)->numberOfMyDice(1..5)->opponentCallVal(1..10)->opponentCallDieFace(1..6) = calls initializeModelValsToNull>
 */
+/*TODO: Right now if total dice is 4 (P1: 2 & P2: 2) then max call
+* can only be 4 of something but the dictionary has vals from
+* 1 of something to 10 of something so a lot of useless space.
+* This needs to be cleaned up. */
 void empiricalData::createOpponentModels(){
 	for ( int dice = 1; dice <= 5; dice++ ){
 		for ( int callVal = 1; callVal <= totalDice; callVal++ ){
@@ -47,9 +51,28 @@ void empiricalData::initializeModel(){
 	createOpponentModels();
 }
 
-/* This function updates the bluff model */
-void empiricalData::updateBluffModel(){
-	//TODO
+/* This function updates the bluff model. It passes in all the keys needed
+ * to update the value and if bluffCalled = 1 then bluff is called else
+ * player made a different call. */
+void empiricalData::updateBluffModel(int goingFirst, int myDice, int oppDice, std::tuple <int, int> myCall, int bluffCalled){
+	if ( bluffCalled == 1 ){
+		get<1>(opponentCallsBluff[goingFirst][myDice][oppDice][myCall]) += 1;
+	}
+	else{
+		get<0>(opponentCallsBluff[goingFirst][myDice][oppDice][myCall]) += 1;
+	}
+}
+
+/* This function updates the call model. It passes in all the keys needed
+ * to update the value and if trueOrFalseCall = 1 that means player was lying
+ * when they made a call. */
+void empiricalData::updateCallModel(int goingFirst, int myDice, int oppDice, std::tuple <int, int> myCall, int trueOrFalseCall){
+	if ( trueOrFalseCall == 1 ){
+		get<1>(opponentMakesCall[goingFirst][myDice][oppDice][myCall]) += 1;
+	}
+	else{
+		get<0>(opponentMakesCall[goingFirst][myDice][oppDice][myCall]) += 1;
+	}
 }
 
 /* This function is only called in DEBUG mode to print the model values
@@ -68,7 +91,7 @@ void empiricalData::printModelValues(int modelNumber){
 				}
 				else{
 					for(auto it = opponentCallsBluff[initialKey][myDice][oppDice].cbegin(); it != opponentCallsBluff[initialKey][myDice][oppDice].cend(); ++it){
-						std::cout << get<0>(it->first) << " " << get<1>(it->first) << "s : Bluff- " << get<0>(it->second) << " Call-" << get<1>(it->second) << "\n";
+						std::cout << get<0>(it->first) << " " << get<1>(it->first) << "s : Call- " << get<0>(it->second) << " Bluff-" << get<1>(it->second) << "\n";
 					}
 				}
 			}

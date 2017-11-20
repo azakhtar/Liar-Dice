@@ -8,7 +8,7 @@ using namespace std;
  * 0: BLUFFER
  * 1: PROBABILISTIC
  * 2: SMART */
-#define PLAYER1 1
+#define PLAYER1 2
 #define PLAYER2 0
 
 /* DEFINE WHICH PLAYER GOES FIRST FOR FIRST GAME
@@ -20,7 +20,7 @@ using namespace std;
 #define DICEPERPLAYER 5
 
 /* ENTER INT NUMBER FOR TOTAL GAMES */
-#define TOTALGAMES 1000
+#define TOTALGAMES 10000
 
 int main(){
 	//Set the seeding to generate random rolls

@@ -19,6 +19,7 @@ public: player(int playerType);
 	    void setRoll(std::vector <int> roll);
 	    std::tuple <int, int> getCall();
 	    void setCall(std::tuple <int, int> otherPlayerCall);
+	    void evaluateBluffModel(int bluffCalled);
 	    void showMapValues();
 	    //empiricalData empricialModel;
 
@@ -34,6 +35,7 @@ private: //FUNCTIONS
 	     //VARIABLES
 	 	 double validityThreshold = 0.0;
 	     int gameInProcess = 0;
+	     int roundInProgress = 0;
 	     int currPlayerDice;
 	     int opponentsDice;
 	     int validUnknownDiceLimit = 0;
@@ -46,7 +48,7 @@ private: //FUNCTIONS
 	     std::map <int, std::vector <double>> diceProbabilities;
 
 	     //MODELS
-	     empiricalData empricialModel;
+	     empiricalData empiricalModel;
 
 
 };
