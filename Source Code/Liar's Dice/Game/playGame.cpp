@@ -74,6 +74,7 @@ void playGame::startGame(int player1Type, int player2Type, int dicePerPlayer, in
 					cout << "Player 2 Won the game." << endl;
 #endif
 				}
+
 				break;
 			}
 
@@ -137,6 +138,19 @@ void playGame::startGame(int player1Type, int player2Type, int dicePerPlayer, in
 						}
 					}
 
+					//##############################################################
+					//**********THIS CODE IS FOR AI AGENT MODELLING ***************
+					/* Following code is executed every time a round finishes when
+					 * AI agent is one of the two players. Opponents roll is passed
+					 * in to smart agent training data to learn about its opponent */
+					if ( player1Type == 2 and turn != 1 ){
+						player1.evaluateCallModel( player2Roll );
+					}
+					else if ( player2Type == 2 and turn == 1){
+						player2.evaluateCallModel( player1Roll );
+					}
+					//######################################################
+
 					/* Set round over to 1 */
 					currRoundOver = 1;
 					turn = newGame.getWinner();
@@ -173,7 +187,7 @@ void playGame::startGame(int player1Type, int player2Type, int dicePerPlayer, in
 
 	//TODO: TEMP
 	if ( player1Type == 2 ){
-		player1.showMapValues();
+		player1.showMapValues(1);
 	}
 
 	/* Print out the results for matchup */

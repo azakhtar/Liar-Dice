@@ -66,12 +66,12 @@ void empiricalData::updateBluffModel(int goingFirst, int myDice, int oppDice, st
 /* This function updates the call model. It passes in all the keys needed
  * to update the value and if trueOrFalseCall = 1 that means player was lying
  * when they made a call. */
-void empiricalData::updateCallModel(int goingFirst, int myDice, int oppDice, std::tuple <int, int> myCall, int trueOrFalseCall){
+void empiricalData::updateCallModel(int goingFirst, int myDice, int oppDice, std::tuple <int, int> oppCall, int trueOrFalseCall){
 	if ( trueOrFalseCall == 1 ){
-		get<1>(opponentMakesCall[goingFirst][myDice][oppDice][myCall]) += 1;
+		get<1>(opponentMakesCall[goingFirst][myDice][oppDice][oppCall]) += 1;
 	}
 	else{
-		get<0>(opponentMakesCall[goingFirst][myDice][oppDice][myCall]) += 1;
+		get<0>(opponentMakesCall[goingFirst][myDice][oppDice][oppCall]) += 1;
 	}
 }
 
@@ -86,7 +86,7 @@ void empiricalData::printModelValues(int modelNumber){
 				cout << "KEY = " << initialKey << "--> MY DICE = " << myDice << ", OPP DICE =" << oppDice << endl;
 				if ( modelNumber == 1 ){
 					for(auto it = opponentMakesCall[initialKey][myDice][oppDice].cbegin(); it != opponentMakesCall[initialKey][myDice][oppDice].cend(); ++it){
-						std::cout << get<0>(it->first) << " " << get<1>(it->first) << "s : Lie- " << get<0>(it->second) << " Truth-" << get<1>(it->second) << "\n";
+						std::cout << get<0>(it->first) << " " << get<1>(it->first) << "s : Truth- " << get<0>(it->second) << " Lie-" << get<1>(it->second) << "\n";
 					}
 				}
 				else{

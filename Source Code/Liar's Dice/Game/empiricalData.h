@@ -12,7 +12,7 @@ public: empiricalData();
 		//FUNCTIONS
 		void initializeModel();
 		void updateBluffModel(int goingFirst, int myDice, int oppDice, std::tuple <int, int> myCall, int bluffCalled);
-		void updateCallModel(int goingFirst, int myDice, int oppDice, std::tuple <int, int> myCall, int trueOrFalseCall);
+		void updateCallModel(int goingFirst, int myDice, int oppDice, std::tuple <int, int> oppCall, int trueOrFalseCall);
 		void printModelValues(int modelNumber);
 
 		//VARIABLES

@@ -20,7 +20,8 @@ public: player(int playerType);
 	    std::tuple <int, int> getCall();
 	    void setCall(std::tuple <int, int> otherPlayerCall);
 	    void evaluateBluffModel(int bluffCalled);
-	    void showMapValues();
+	    void evaluateCallModel(std::vector <int> oppRoll);
+	    void showMapValues(int mapType);
 	    //empiricalData empricialModel;
 
 private: //FUNCTIONS
@@ -30,6 +31,7 @@ private: //FUNCTIONS
 	     void blufferCall();
 	     void probableCall();
 	     void smartCall();
+	     void saveOpponentCalls();
 
 
 	     //VARIABLES
@@ -46,6 +48,7 @@ private: //FUNCTIONS
 	     std::tuple <int, int> otherPlayerCall = (std::make_tuple(0, 0));
 	     std::tuple <int, int> defaultBluff = (std::make_tuple(-1, -1));
 	     std::map <int, std::vector <double>> diceProbabilities;
+	     std::vector <std::tuple <int, int>> savedOppCalls;
 
 	     //MODELS
 	     empiricalData empiricalModel;

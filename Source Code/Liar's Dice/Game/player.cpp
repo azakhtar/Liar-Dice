@@ -354,9 +354,53 @@ void player::probableCall(){
 #endif
 }
 
+/* THe purpose for this function is to save each of opponents call for
+ * model training purposes of the smart player. */
+void player::saveOpponentCalls(){
+	if ( get<0>(otherPlayerCall) != 0 ){
+		savedOppCalls.push_back( otherPlayerCall );
+	}
+}
+
 void player::smartCall(){
 	probableCall();
+	saveOpponentCalls();
+}
 
+/* Once round is over, this function uses all opponents saved calls in
+ * saveOpponentCalls() and compares them to opponents roll to see which calls
+ * were bluffs and which were real. Once determined empirical Call model is updated
+ * by passing 0 as Truth and 1 as Lie value.*/
+void player::evaluateCallModel(std::vector <int> oppRoll){
+	int count = 0;
+	int dieVal = 0;
+	int actualCount = 0;
+
+	/* Iterate over all saved opponent calls */
+	for( size_t i = 0; i < savedOppCalls.size(); i++ ){
+		count = get<0>(savedOppCalls[i]);
+		dieVal = get<1>(savedOppCalls[i]);
+		actualCount = 0;
+
+		/* Iterate over opponents roll to validate result */
+		for( size_t j = 0; j < oppRoll.size(); j++ ){
+			if ( oppRoll[j] == dieVal ){
+				actualCount++;
+			}
+		}
+
+		//TODO: Fix this issue for when opponent calls first or not
+		/* If opponent is telling truth pass in the call and 0 as TRUTH ELSE pass 1 as Lie. */
+		if ( actualCount == count ){
+			empiricalModel.updateCallModel(1, currPlayerDice, opponentsDice, savedOppCalls[i], 0);
+		}
+		else{
+			empiricalModel.updateCallModel(1, currPlayerDice, opponentsDice, savedOppCalls[i], 1);
+		}
+	}
+
+	/* Clear the vector for new game */
+	savedOppCalls.clear();
 }
 
 /* This function call the bluff model function any time opponent calls a bluff. It passes
@@ -374,11 +418,19 @@ void player::evaluateBluffModel(int bluffCalled){
 	}
 }
 
-/* This function is called if we want to debug and look at all map values */
-void player::showMapValues(){
-	//int i = 0;
-	//empiricalModel.printModelValues(i++);
-	empiricalModel.printModelValues(2);
+/* This function is called if we want to debug and look at all map values.
+ * 1-Print Call Model, 2-Print Bluff Model, 3-Print Both Models. */
+void player::showMapValues(int mapType){
+	if ( mapType == 1 ){
+		empiricalModel.printModelValues(1);
+	}
+	else if ( mapType == 2 ){
+		empiricalModel.printModelValues(2);
+	}
+	else if ( mapType == 3 ){
+		empiricalModel.printModelValues(1);
+		empiricalModel.printModelValues(2);
+	}
 }
 
 
