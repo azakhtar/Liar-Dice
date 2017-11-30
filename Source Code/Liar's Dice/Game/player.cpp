@@ -354,7 +354,7 @@ void player::probableCall(){
 #endif
 }
 
-/* THe purpose for this function is to save each of opponents call for
+/* The purpose for this function is to save each of opponents call for
  * model training purposes of the smart player. */
 void player::saveOpponentCalls(){
 	if ( get<0>(otherPlayerCall) != 0 ){
@@ -363,8 +363,15 @@ void player::saveOpponentCalls(){
 }
 
 void player::smartCall(){
+	/* If SMART agent goes first ( which is get<0>(otherPlayerCall)=0 )that means
+	 * smartPlayerOpponent is not going first so change that value. */
+	if ( get<0>(otherPlayerCall) == 0 and smartPlayerOpponent == 1 ){
+		smartPlayerOpponent = 0;
+	}
+
 	probableCall();
 	saveOpponentCalls();
+
 }
 
 /* Once round is over, this function uses all opponents saved calls in
@@ -375,6 +382,10 @@ void player::evaluateCallModel(std::vector <int> oppRoll){
 	int count = 0;
 	int dieVal = 0;
 	int actualCount = 0;
+
+#ifdef DEBUG
+		cout << "###############################" << endl;
+#endif
 
 	/* Iterate over all saved opponent calls */
 	for( size_t i = 0; i < savedOppCalls.size(); i++ ){
@@ -389,18 +400,33 @@ void player::evaluateCallModel(std::vector <int> oppRoll){
 			}
 		}
 
-		//TODO: Fix this issue for when opponent calls first or not
+#ifdef DEBUG
+		cout << "Opp Call: " << count << " " << dieVal << "s. Actual_Count: " << actualCount;
+#endif
+
 		/* If opponent is telling truth pass in the call and 0 as TRUTH ELSE pass 1 as Lie. */
-		if ( actualCount == count ){
-			empiricalModel.updateCallModel(1, currPlayerDice, opponentsDice, savedOppCalls[i], 0);
+		if ( actualCount >= count ){
+			empiricalModel.updateCallModel(smartPlayerOpponent, currPlayerDice, opponentsDice, savedOppCalls[i], 0);
+#ifdef DEBUG
+			cout << " --> KEY " << smartPlayerOpponent << " TRUTH" << endl;
+#endif
 		}
 		else{
-			empiricalModel.updateCallModel(1, currPlayerDice, opponentsDice, savedOppCalls[i], 1);
+			empiricalModel.updateCallModel(smartPlayerOpponent, currPlayerDice, opponentsDice, savedOppCalls[i], 1);
+#ifdef DEBUG
+			cout << " --> KEY " << smartPlayerOpponent << " LIE" << endl;
+#endif
 		}
+
+		//Set opponent Key to 0 after first call is checked
+		smartPlayerOpponent = 0;
 	}
 
 	/* Clear the vector for new game */
 	savedOppCalls.clear();
+
+	//Set opponent to 1 again to validate if check in smart agent for new round
+	smartPlayerOpponent = 1;
 }
 
 /* This function call the bluff model function any time opponent calls a bluff. It passes

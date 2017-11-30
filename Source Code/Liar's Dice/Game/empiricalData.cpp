@@ -86,12 +86,12 @@ void empiricalData::printModelValues(int modelNumber){
 				cout << "KEY = " << initialKey << "--> MY DICE = " << myDice << ", OPP DICE =" << oppDice << endl;
 				if ( modelNumber == 1 ){
 					for(auto it = opponentMakesCall[initialKey][myDice][oppDice].cbegin(); it != opponentMakesCall[initialKey][myDice][oppDice].cend(); ++it){
-						std::cout << get<0>(it->first) << " " << get<1>(it->first) << "s : Truth- " << get<0>(it->second) << " Lie-" << get<1>(it->second) << "\n";
+						std::cout << get<0>(it->first) << " " << get<1>(it->first) << "s : Truth- " << get<0>(it->second) << " Lie- " << get<1>(it->second) << "\n";
 					}
 				}
 				else{
 					for(auto it = opponentCallsBluff[initialKey][myDice][oppDice].cbegin(); it != opponentCallsBluff[initialKey][myDice][oppDice].cend(); ++it){
-						std::cout << get<0>(it->first) << " " << get<1>(it->first) << "s : Call- " << get<0>(it->second) << " Bluff-" << get<1>(it->second) << "\n";
+						std::cout << get<0>(it->first) << " " << get<1>(it->first) << "s : Call- " << get<0>(it->second) << " Bluff- " << get<1>(it->second) << "\n";
 					}
 				}
 			}

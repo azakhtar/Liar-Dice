@@ -41,6 +41,7 @@ private: //FUNCTIONS
 	     int currPlayerDice;
 	     int opponentsDice;
 	     int validUnknownDiceLimit = 0;
+	     int smartPlayerOpponent = 1;
 	     player::PLAYERTYPE currPlayer;
 	     std::vector <int> playerRoll;
 	     std::vector <std::tuple <int, int>> diceCount;

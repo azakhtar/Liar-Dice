@@ -43,7 +43,7 @@ private: //FUNCTIONS
 		std::tuple <int, int> defaultTupleVal = (std::make_tuple(0, 0));
 		std::tuple <int, int> defaultCall = (std::make_tuple(0, 0));
 		std::tuple <int, int> currCall = (std::make_tuple(0, 0));
-		int totalDice = 10;
+		int totalDice = 6;	//TODO: Should this be 10
 
 };
 
