@@ -134,11 +134,13 @@ void playGame::startGame(int player1Type, int player2Type, int dicePerPlayer, in
 						//*****THIS CODE IS FOR AI AGENT MODELLING *************
 						/* Following code means if player type is SMART Player and
 						 * opponent calls bluff we want to increment the bluff counter. */
-						if ( player1Type == 2 and turn != 1 ){
-							player1.evaluateBluffModel(1);
-						}
-						else if ( player2Type == 2 and turn == 1){
-							player2.evaluateBluffModel(1);
+						if ( trainingComplete == 0 ){
+							if ( player1Type == 2 and turn != 1 ){
+								player1.evaluateBluffModel(1);
+							}
+							else if ( player2Type == 2 and turn == 1){
+								player2.evaluateBluffModel(1);
+							}
 						}
 						//######################################################
 
@@ -177,11 +179,13 @@ void playGame::startGame(int player1Type, int player2Type, int dicePerPlayer, in
 						/* Following code is executed every time a round finishes when
 						 * AI agent is one of the two players. Opponents roll is passed
 						 * in to smart agent training data to learn about its opponent */
-						if ( player1Type == 2 ){
-							player1.evaluateCallModel( player2Roll );
-						}
-						else if ( player2Type == 2 ){
-							player2.evaluateCallModel( player1Roll );
+						if ( trainingComplete == 0 ){
+							if ( player1Type == 2 ){
+								player1.evaluateCallModel( player2Roll );
+							}
+							else if ( player2Type == 2 ){
+								player2.evaluateCallModel( player1Roll );
+							}
 						}
 						//######################################################
 
@@ -199,11 +203,13 @@ void playGame::startGame(int player1Type, int player2Type, int dicePerPlayer, in
 						/* Following code means if player type is SMART Player and
 						 * opponent does not call bluff after SMART Player call then
 						 * show that value in the player model. */
-						if ( player1Type == 2 and turn != 1 ){
-							player1.evaluateBluffModel(0);
-						}
-						else if ( player2Type == 2 and turn == 1){
-							player2.evaluateBluffModel(0);
+						if ( trainingComplete == 0 ){
+							if ( player1Type == 2 and turn != 1 ){
+								player1.evaluateBluffModel(0);
+							}
+							else if ( player2Type == 2 and turn == 1){
+								player2.evaluateBluffModel(0);
+							}
 						}
 						//######################################################
 
