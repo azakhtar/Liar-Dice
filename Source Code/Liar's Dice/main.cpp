@@ -19,8 +19,11 @@ using namespace std;
 /* ENTER TOTAL NUMBER OF DICE PER PLAYER */
 #define DICEPERPLAYER 5
 
-/* ENTER INT NUMBER FOR TOTAL GAMES */
-#define TOTALGAMES 10000
+/* ENTER INT NUMBER FOR TOTAL TRAINGING GAMES */
+#define TRAININGGAMES 0
+
+/* ENTER INT NUMBER FOR TOTAL TRAINGING GAMES */
+#define REALGAMES 1000
 
 int main(){
 	//Set the seeding to generate random rolls
@@ -33,7 +36,7 @@ int main(){
 #endif
 
 	//Create playGame object that plays TOTALGAMES between PLAYER1 vs PLAYER2 with DICEPERPLAYER dice per player
-	playGame playGame(PLAYER1, PLAYER2, DICEPERPLAYER, TURN, TOTALGAMES);
+	playGame playGame(PLAYER1, PLAYER2, DICEPERPLAYER, TURN, TRAININGGAMES, REALGAMES);
 
 	return 0;
 }

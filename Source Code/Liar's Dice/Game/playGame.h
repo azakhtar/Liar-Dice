@@ -7,9 +7,10 @@
 
 class playGame{
 
-public: 	playGame(int player1Type, int player2Type, int dicePerPlayer, int playerTurn, int totalGames);
+public: 	playGame(int player1Type, int player2Type, int dicePerPlayer, int playerTurn, int trainingGames, int realGames);
 
-private: 	void startGame(int player1Type, int player2Type, int dicePerPlayer, int playerTurn, int totalGames);
+private: 	void startGame(int player1Type, int player2Type, int dicePerPlayer, int playerTurn, int trainingGames, int realGames);
+			void setDefaults();
 
 			int player1Dice = -1;
 			int player2Dice = -1;
@@ -25,6 +26,8 @@ private: 	void startGame(int player1Type, int player2Type, int dicePerPlayer, in
 			int gamesP1Won = 0;
 			int gamesP2Won = 0;
 			int winner = 0;
+			int trainingComplete = 0;
+			int totalGamesThisIteration = 0;
 
 };
 
