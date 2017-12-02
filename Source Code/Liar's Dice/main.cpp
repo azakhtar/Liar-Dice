@@ -20,10 +20,10 @@ using namespace std;
 #define DICEPERPLAYER 5
 
 /* ENTER INT NUMBER FOR TOTAL TRAINGING GAMES */
-#define TRAININGGAMES 0
+#define TRAININGGAMES 1000
 
 /* ENTER INT NUMBER FOR TOTAL TRAINGING GAMES */
-#define REALGAMES 1000
+#define REALGAMES 1
 
 int main(){
 	//Set the seeding to generate random rolls

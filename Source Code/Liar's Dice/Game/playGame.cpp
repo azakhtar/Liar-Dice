@@ -52,6 +52,11 @@ void playGame::startGame(int player1Type, int player2Type, int dicePerPlayer, in
 		else{
 			totalGamesThisIteration = realGames;
 			cout << "RUNNING REAL GAMES" << endl;
+
+			/* If Smart agent is one of the players, update training flag to mark completed */
+			if ( player1Type == 2 ){
+				player1.updateTrainingStatus( 1 );
+			}
 		}
 
 		while ( games < totalGamesThisIteration ){
@@ -225,7 +230,7 @@ void playGame::startGame(int player1Type, int player2Type, int dicePerPlayer, in
 			}
 		}
 		//TODO: TEMP
-		if ( player1Type == 2 ){
+		if ( player1Type == 2 and trainingComplete == 0 ){
 			player1.showMapValues(1);
 		}
 

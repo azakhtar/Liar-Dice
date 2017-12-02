@@ -13,6 +13,8 @@ public: empiricalData();
 		void initializeModel();
 		void updateBluffModel(int goingFirst, int myDice, int oppDice, std::tuple <int, int> myCall, int bluffCalled);
 		void updateCallModel(int goingFirst, int myDice, int oppDice, std::tuple <int, int> oppCall, int trueOrFalseCall);
+		std::tuple <int, int> extractBluffModelVal(int goingFirst, int myDice, int oppDice, std::tuple <int, int> myCall);
+		std::tuple <int, int> extractCallModelVal(int goingFirst, int myDice, int oppDice, std::tuple <int, int> oppCall);
 		void printModelValues(int modelNumber);
 
 		//VARIABLES

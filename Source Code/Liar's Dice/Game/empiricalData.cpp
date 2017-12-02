@@ -30,10 +30,6 @@ void empiricalData::initializeModelValsToNull(int myDice){
 /* This function creates values for initializing models. Example
  * isItMyFirstCall(1/2)->numberOfMyDice(1..5)->opponentCallVal(1..10)->opponentCallDieFace(1..6) = calls initializeModelValsToNull>
 */
-/*TODO: Right now if total dice is 4 (P1: 2 & P2: 2) then max call
-* can only be 4 of something but the dictionary has vals from
-* 1 of something to 10 of something so a lot of useless space.
-* This needs to be cleaned up. */
 void empiricalData::createOpponentModels(){
 	for ( int dice = 1; dice <= 5; dice++ ){
 		for ( int callVal = 1; callVal <= totalDice; callVal++ ){
@@ -73,6 +69,22 @@ void empiricalData::updateCallModel(int goingFirst, int myDice, int oppDice, std
 	else{
 		get<0>(opponentMakesCall[goingFirst][myDice][oppDice][oppCall]) += 1;
 	}
+}
+
+/* This function returns the value from BluffModel for specific player call depending on flags passed in. */
+std::tuple <int, int> empiricalData::extractBluffModelVal(int goingFirst, int myDice, int oppDice, std::tuple <int, int> myCall){
+#ifdef DEBUG
+	cout << "BLUFF MODEL VAL: Call- " << get<0>(opponentCallsBluff[goingFirst][myDice][oppDice][myCall]) << " Bluff- " << get<1>(opponentCallsBluff[goingFirst][myDice][oppDice][myCall]) <<endl;
+#endif
+	return opponentCallsBluff[goingFirst][myDice][oppDice][myCall];
+}
+
+/* This function returns the value from CallModel for specific player call depending on flags passed in. */
+std::tuple <int, int> empiricalData::extractCallModelVal(int goingFirst, int myDice, int oppDice, std::tuple <int, int> oppCall){
+#ifdef DEBUG
+	cout << "CALL MODEL VAL: Truth- " << get<0>(opponentMakesCall[goingFirst][myDice][oppDice][oppCall]) << " Lie- " << get<1>(opponentMakesCall[goingFirst][myDice][oppDice][oppCall]) <<endl;
+#endif
+	return opponentMakesCall[goingFirst][myDice][oppDice][oppCall];
 }
 
 /* This function is only called in DEBUG mode to print the model values
