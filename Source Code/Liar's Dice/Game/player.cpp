@@ -248,6 +248,10 @@ void player::blufferCall(){
 #endif
 }
 
+/*****************************************************************************/
+//********************PROBABLISTIC AGENT FUNCTION*****************************/
+/*****************************************************************************/
+
 /* This function determines the call for probable player. */
 void player::probableCall(){
 	int lastCallExists = 0;
@@ -354,6 +358,10 @@ void player::probableCall(){
 #endif
 }
 
+/*****************************************************************************/
+//***********************SMART AGENT FUNCTION*********************************/
+/*****************************************************************************/
+
 /* The purpose for this function is to save each of opponents call for
  * model training purposes of the smart player. */
 void player::saveOpponentCalls(){
@@ -364,6 +372,8 @@ void player::saveOpponentCalls(){
 
 /* This function evaluate if opponent is lying and determines if its worth calling a Bluff. */
 int player::evaluateOpponentCall(){
+	int callLie = 0;
+
 	/* If current player is going second set oppGoesFirst flag to 1. */
 	if ( get<0>(currPlayerCall) == 0 ){
 		oppGoesFirst = 1;
@@ -379,13 +389,25 @@ int player::evaluateOpponentCall(){
 	/* Reset the flag to 0 for rest of the round */
 	oppGoesFirst = 0;
 
-	/*if ( get<1>(truthLieVals) > get<0>(truthLieVals) * 2 ){
-		//cout << "BLUFFER Calls: " << get<0>(otherPlayerCall) << " " << get<1>(otherPlayerCall) << "s"  <<endl;
-		//cout << "CALL MODEL VAL RETURNED: Truth- " << get<0>(truthLieVals) << " Lie- " << get<1>(truthLieVals) << "s"  <<endl;
-		currPlayerCall = (std::make_tuple(-1, -1));
-	}*/
+	//TODO: Work in progress
+	/* If the ration of Truth < 20*Lies then call bluff. */
+	if ( get<1>(truthLieVals) > get<0>(truthLieVals) * 20 ){
+		int localCount = 0;
 
-	return 0;
+		for( size_t i = 0; i < diceCount.size(); i++ ){
+			localCount = 0;
+			if ( get<1>(otherPlayerCall) == get<1>(diceCount[i]) ){
+				localCount++;
+			}
+		}
+
+		if ( localCount <= 1 and get<0>(otherPlayerCall) > 1 ){
+			currPlayerCall = (std::make_tuple(-1, -1));
+			callLie = 1;
+		}
+	}
+
+	return callLie;
 }
 
 /* This function evaluate if opponent will call my bluff and if so it modifies the call. */
