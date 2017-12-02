@@ -231,7 +231,7 @@ void playGame::startGame(int player1Type, int player2Type, int dicePerPlayer, in
 		}
 		//TODO: TEMP
 		if ( player1Type == 2 and trainingComplete == 0 ){
-			player1.showMapValues(1);
+			player1.showMapValues(0);
 		}
 
 		/* Print out the results for matchup */

@@ -362,56 +362,77 @@ void player::saveOpponentCalls(){
 	}
 }
 
+/* This function evaluate if opponent is lying and determines if its worth calling a Bluff. */
+int player::evaluateOpponentCall(){
+	/* If current player is going second set oppGoesFirst flag to 1. */
+	if ( get<0>(currPlayerCall) == 0 ){
+		oppGoesFirst = 1;
+	}
+
+	truthLieVals = empiricalModel.extractCallModelVal(oppGoesFirst, currPlayerDice, opponentsDice, otherPlayerCall);
+
+#ifdef DEBUG
+	cout << "BLUFFER Calls: " << get<0>(otherPlayerCall) << " " << get<1>(otherPlayerCall) << "s"  <<endl;
+	cout << "CALL MODEL VAL RETURNED: Truth- " << get<0>(truthLieVals) << " Lie- " << get<1>(truthLieVals) << "s"  <<endl;
+#endif
+
+	/* Reset the flag to 0 for rest of the round */
+	oppGoesFirst = 0;
+
+	/*if ( get<1>(truthLieVals) > get<0>(truthLieVals) * 2 ){
+		//cout << "BLUFFER Calls: " << get<0>(otherPlayerCall) << " " << get<1>(otherPlayerCall) << "s"  <<endl;
+		//cout << "CALL MODEL VAL RETURNED: Truth- " << get<0>(truthLieVals) << " Lie- " << get<1>(truthLieVals) << "s"  <<endl;
+		currPlayerCall = (std::make_tuple(-1, -1));
+	}*/
+
+	return 0;
+}
+
+/* This function evaluate if opponent will call my bluff and if so it modifies the call. */
+int player::evaluateAIAgentCall(){
+	/* If current player is going first set smartAgentGoesFirst flag to 1. */
+	if ( get<0>(otherPlayerCall) == 0 ){
+		smartAgentGoesFirst = 1;
+	}
+
+	callBluffVals = empiricalModel.extractBluffModelVal(smartAgentGoesFirst, currPlayerDice, opponentsDice, currPlayerCall);
+
+#ifdef DEBUG
+	cout << "PROBABILISIC Calls: " << get<0>(currPlayerCall) << " " << get<1>(currPlayerCall) << "s"  <<endl;
+	cout << "BLUFF MODEL VAL RETURNED: Call- " << get<0>(callBluffVals) << " Bluff- " << get<1>(callBluffVals) << "s"  <<endl;
+#endif
+
+	/* Reset the flag to 0 for rest of the round */
+	smartAgentGoesFirst = 0;
+
+	return 0;
+}
+
 void player::smartCall(){
+	int opponentIsLying = 0;
+	int opponentWillCallBluff = 0;
+
 	/* If SMART agent goes first ( which is get<0>(otherPlayerCall)=0 )that means
 	 * smartPlayerOpponent is not going first so change that value. */
 	if ( get<0>(otherPlayerCall) == 0 and smartPlayerOpponent == 1 ){
 		smartPlayerOpponent = 0;
 	}
 
-	/**********************************************************************************/
-	/************************EXECUTE AFTER TRAINING************************************/
-	/**********************************************************************************/
 	/* If training is complete determine if opponent is lying or not with their call. */
 	if ( trainingComplete == 1 ){
-		/* If current player is going second set oppGoesFirst flag to 1. */
-		if ( get<0>(currPlayerCall) == 0 ){
-			oppGoesFirst = 1;
-		}
-		truthLieVals = empiricalModel.extractCallModelVal(oppGoesFirst, currPlayerDice, opponentsDice, otherPlayerCall);
-#ifdef DEBUG
-		cout << "BLUFFER Calls: " << get<0>(otherPlayerCall) << " " << get<1>(otherPlayerCall) << "s"  <<endl;
-		cout << "CALL MODEL VAL RETURNED: Truth- " << get<0>(truthLieVals) << " Lie- " << get<1>(truthLieVals) << "s"  <<endl;
-#endif
-
-		/* Reset the flag to 0 for rest of the round */
-		oppGoesFirst = 0;
+		opponentIsLying = evaluateOpponentCall();
 	}
-	/**********************************************************************************/
 
 	/* Use the probabilistic model to make a call and save opponents call. */
-	probableCall();
-	saveOpponentCalls();
+	if ( opponentIsLying == 0 ){
+		probableCall();
+		saveOpponentCalls();
 
-	/**********************************************************************************/
-	/************************EXECUTE AFTER TRAINING************************************/
-	/**********************************************************************************/
-	/* If training is complete determine if opponent will call bluff or current call. */
-	if ( trainingComplete == 1 ){
-		/* If current player is going first set smartAgentGoesFirst flag to 1. */
-		if ( get<0>(otherPlayerCall) == 0 ){
-			smartAgentGoesFirst = 1;
+		/* If training is complete determine if opponent will call bluff or current call. */
+		if ( trainingComplete == 1 ){
+			opponentWillCallBluff = evaluateAIAgentCall();
 		}
-		callBluffVals = empiricalModel.extractBluffModelVal(smartAgentGoesFirst, currPlayerDice, opponentsDice, currPlayerCall);
-#ifdef DEBUG
-		cout << "PROBABILISIC Calls: " << get<0>(currPlayerCall) << " " << get<1>(currPlayerCall) << "s"  <<endl;
-		cout << "BLUFF MODEL VAL RETURNED: Call- " << get<0>(callBluffVals) << " Bluff- " << get<1>(callBluffVals) << "s"  <<endl;
-#endif
-
-		/* Reset the flag to 0 for rest of the round */
-		smartAgentGoesFirst = 0;
 	}
-	/**********************************************************************************/
 
 }
 
