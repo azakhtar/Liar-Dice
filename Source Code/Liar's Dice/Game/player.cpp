@@ -395,7 +395,7 @@ int player::evaluateOpponentCall(){
 		int localCount = 0;
 
 		for( size_t i = 0; i < diceCount.size(); i++ ){
-			localCount = 0;
+			//localCount = 0;
 			if ( get<1>(otherPlayerCall) == get<1>(diceCount[i]) ){
 				localCount++;
 			}
@@ -411,7 +411,7 @@ int player::evaluateOpponentCall(){
 }
 
 /* This function evaluate if opponent will call my bluff and if so it modifies the call. */
-int player::evaluateAIAgentCall(){
+void player::evaluateAIAgentCall(){
 	/* If current player is going first set smartAgentGoesFirst flag to 1. */
 	if ( get<0>(otherPlayerCall) == 0 ){
 		smartAgentGoesFirst = 1;
@@ -424,15 +424,62 @@ int player::evaluateAIAgentCall(){
 	cout << "BLUFF MODEL VAL RETURNED: Call- " << get<0>(callBluffVals) << " Bluff- " << get<1>(callBluffVals) << "s"  <<endl;
 #endif
 
+	/* Evaluate if this is the best call to make or not. If not, update the call. */
+	if ( get<1>(callBluffVals) > get<0>(callBluffVals) ){
+		int localCount = 0;
+
+		/* Determin how many dies of the call face value curr player actually has.
+		 * If the player has less than or equal to the call value then go ahead with the call.
+		 * Otherwise go in the else and keep incrementing through the model until a call is reached
+		 * where opponent will be more likely to lose depending on if they call or not. */
+		for( size_t i = 0; i < diceCount.size(); i++ ){
+			localCount = 0;
+			if ( get<1>(currPlayerCall) == get<1>(diceCount[i]) ){
+				localCount++;
+			}
+		}
+
+		if ( localCount > get<0>(currPlayerCall) ){
+			int betterCallFound = 0;
+			int newCallCount = 0;
+			int newCallDieFace = 0;
+			std::tuple <int, int> newCall = (std::make_tuple(0, 0));
+
+			while ( betterCallFound == 0 ){
+				/* Increment count value of call by 1 unless it is 6, then reset to 1
+				 * and increment the face value of the call by 1. E.g 3 4s -> 3 5s OR
+				 * 6 3s -> 1 4s. */
+				if ( get<0>(currPlayerCall) == 6 ){
+					newCallCount = 1;
+					newCallDieFace = get<1>(currPlayerCall) + 1;
+				}
+				else {
+					newCallCount = get<0>(currPlayerCall) + 1;
+					newCallDieFace = get<1>(currPlayerCall);
+				}
+
+				/* Create a new call tuple with values set above. */
+				newCall = (std::make_tuple(newCallCount, newCallDieFace));
+
+				/* Obtain the Call/Bluff ratio from the Bluff Model for the new call. */
+				callBluffVals = empiricalModel.extractBluffModelVal(smartAgentGoesFirst, currPlayerDice, opponentsDice, newCall);
+
+				//TODO:
+				if ( get<1>(callBluffVals) < get<0>(callBluffVals) ){
+					currPlayerCall = newCall;
+					betterCallFound = 1;
+				}
+			}
+		}
+	}
+
 	/* Reset the flag to 0 for rest of the round */
 	smartAgentGoesFirst = 0;
 
-	return 0;
 }
 
 void player::smartCall(){
 	int opponentIsLying = 0;
-	int opponentWillCallBluff = 0;
 
 	/* If SMART agent goes first ( which is get<0>(otherPlayerCall)=0 )that means
 	 * smartPlayerOpponent is not going first so change that value. */
@@ -452,7 +499,7 @@ void player::smartCall(){
 
 		/* If training is complete determine if opponent will call bluff or current call. */
 		if ( trainingComplete == 1 ){
-			opponentWillCallBluff = evaluateAIAgentCall();
+			evaluateAIAgentCall();
 		}
 	}
 

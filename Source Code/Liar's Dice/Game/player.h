@@ -34,7 +34,7 @@ private: 	//FUNCTIONS
 			void smartCall();
 			void saveOpponentCalls();
 			int  evaluateOpponentCall();
-			int  evaluateAIAgentCall();
+			void evaluateAIAgentCall();
 
 
 			//VARIABLES
