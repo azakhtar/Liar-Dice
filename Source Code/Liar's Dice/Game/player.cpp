@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <cmath>
 #include <iomanip>
+#include <time.h>
 #include "player.h"
 #include "game.h"
 #include "empiricalData.h"
@@ -169,6 +170,9 @@ std::tuple <int, int> player::getCall(){
 	}
 	else if ( currPlayer == player::PLAYERTYPE::SMART ){
 		smartCall();
+	}
+	else if ( currPlayer == player::PLAYERTYPE::RANDOM ){
+		randomCall();
 	}
 	return currPlayerCall;
 }
@@ -356,6 +360,19 @@ void player::probableCall(){
 		cout << "PROBABLISTIC Calls: " << get<0>(currPlayerCall) << " " << get<1>(currPlayerCall) << "s"  <<endl;
 	}
 #endif
+}
+
+/*****************************************************************************/
+//***********************RANDOM AGENT FUNCTION*********************************/
+/*****************************************************************************/
+void player::randomCall(){
+	int i = rand() % 6 + 1;
+	if ( i > 3 ){
+		probableCall();
+	}
+	else{
+		blufferCall();
+	}
 }
 
 /*****************************************************************************/

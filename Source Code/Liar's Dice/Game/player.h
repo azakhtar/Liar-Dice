@@ -11,7 +11,7 @@ class player{
 public: 	player(int playerType);
 
 			//ENUMERATIONS
-			enum PLAYERTYPE { BLUFFER, PROBABILISTIC, SMART, NONE };
+			enum PLAYERTYPE { BLUFFER, PROBABILISTIC, SMART, RANDOM, NONE };
 
 			//FUNCTIONS
 			player::PLAYERTYPE getPlayer();
@@ -32,6 +32,7 @@ private: 	//FUNCTIONS
 			void blufferCall();
 			void probableCall();
 			void smartCall();
+			void randomCall();
 			void saveOpponentCalls();
 			int  evaluateOpponentCall();
 			void evaluateAIAgentCall();
