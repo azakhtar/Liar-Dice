@@ -9,7 +9,7 @@ using namespace std;
  * 1: PROBABILISTIC
  * 2: SMART */
 #define PLAYER1 2
-#define PLAYER2 0
+#define PLAYER2 1
 
 /* DEFINE WHICH PLAYER GOES FIRST FOR FIRST GAME
  * TURN = 1 --> FOR PLAYER 1 above
@@ -20,10 +20,10 @@ using namespace std;
 #define DICEPERPLAYER 5
 
 /* ENTER INT NUMBER FOR TOTAL TRAINGING GAMES */
-#define TRAININGGAMES 1000
+#define TRAININGGAMES 10000
 
 /* ENTER INT NUMBER FOR TOTAL TRAINGING GAMES */
-#define REALGAMES 1
+#define REALGAMES 10000
 
 int main(){
 	//Set the seeding to generate random rolls

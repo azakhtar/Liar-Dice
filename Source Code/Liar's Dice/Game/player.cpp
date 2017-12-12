@@ -434,18 +434,21 @@ void player::evaluateAIAgentCall(){
 		 * where opponent will be more likely to lose depending on if they call or not. */
 		for( size_t i = 0; i < diceCount.size(); i++ ){
 			localCount = 0;
+			//cout << "Actual: " << get<1>(diceCount[i]) << " MY= " << get<1>(currPlayerCall) << endl;
 			if ( get<1>(currPlayerCall) == get<1>(diceCount[i]) ){
 				localCount++;
 			}
 		}
 
-		if ( localCount > get<0>(currPlayerCall) ){
+		if ( localCount < get<0>(currPlayerCall) ){
 			int betterCallFound = 0;
 			int newCallCount = 0;
 			int newCallDieFace = 0;
 			std::tuple <int, int> newCall = (std::make_tuple(0, 0));
+			std::tuple <int, int> localCallBluffVals = (std::make_tuple(0, 0));
 
 			while ( betterCallFound == 0 ){
+
 				/* Increment count value of call by 1 unless it is 6, then reset to 1
 				 * and increment the face value of the call by 1. E.g 3 4s -> 3 5s OR
 				 * 6 3s -> 1 4s. */
@@ -461,14 +464,15 @@ void player::evaluateAIAgentCall(){
 				/* Create a new call tuple with values set above. */
 				newCall = (std::make_tuple(newCallCount, newCallDieFace));
 
-				/* Obtain the Call/Bluff ratio from the Bluff Model for the new call. */
+				/* Obtain the Call/Bluff ratio from the Bluff Model for the new call & old call. */
+				localCallBluffVals = empiricalModel.extractBluffModelVal(smartAgentGoesFirst, currPlayerDice, opponentsDice, currPlayerCall);
 				callBluffVals = empiricalModel.extractBluffModelVal(smartAgentGoesFirst, currPlayerDice, opponentsDice, newCall);
 
-				//TODO:
-				if ( get<1>(callBluffVals) < get<0>(callBluffVals) ){
+				if ( (get<1>(callBluffVals) > 0 and get<0>(callBluffVals) > get<1>(callBluffVals) ) and ( get<1>(localCallBluffVals) > 4 * get<1>(callBluffVals) ) ){
 					currPlayerCall = newCall;
-					betterCallFound = 1;
 				}
+
+				betterCallFound = 1;
 			}
 		}
 	}
